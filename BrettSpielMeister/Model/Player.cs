@@ -4,9 +4,10 @@ namespace BrettSpielMeister.Model
 {
     public class Player
     {
+        public List<Figure> Figures = new List<Figure>();
         public string Name { get; set; }
 
-        public List<Figure> Figures = new List<Figure>();
+        public char Character { get; set; }
 
         public override string ToString()
         {

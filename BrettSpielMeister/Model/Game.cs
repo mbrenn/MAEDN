@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BrettSpielMeister.Model
 {
@@ -6,11 +7,11 @@ namespace BrettSpielMeister.Model
     {
         public List<Player> Players = new List<Player>();
 
-        public Map Map;
-
         public Game(Map map)
         {
-
+            Map = map ?? throw new ArgumentNullException(nameof(map));
         }
+
+        public Map Map { get; set; }
     }
 }

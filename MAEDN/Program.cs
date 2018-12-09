@@ -4,15 +4,15 @@ using MAEDN.Rules;
 
 namespace MAEDN
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var map = new MaednMap();
-            map.Create();
+            var gameLogic = new MaednLogic(new MaednConfiguration());
+            gameLogic.Run();
 
             var mapToConsole = new MapToConsole();
-            mapToConsole.Write(map);
+            mapToConsole.Write(gameLogic.Game);
 
             Console.ReadKey();
         }

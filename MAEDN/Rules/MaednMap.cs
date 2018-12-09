@@ -1,30 +1,57 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using BrettSpielMeister.Model;
 
 namespace MAEDN.Rules
 {
     public class MaednMap : Map
     {
-        /// <summary>
-        /// Creates the map for the user
-        /// </summary>
-        public void Create()
+        public IEnumerable<Field> RedStartFields => new[]
         {
-            var start = new FieldType();
-            start.Character = 'h';
+            Fields[0],
+            Fields[1],
+            Fields[2],
+            Fields[3]
+        };
 
-            var goal = new FieldType();
-            goal.Character = 'g';
+        public IEnumerable<Field> YellowStartFields => new[]
+        {
+            Fields[4],
+            Fields[5],
+            Fields[6],
+            Fields[7]
+        };
 
-            var standard = new FieldType();
-            standard.Character = 'o';
+        public IEnumerable<Field> GreenStartFields => new[]
+        {
+            Fields[8],
+            Fields[9],
+            Fields[10],
+            Fields[11]
+        };
 
+        public IEnumerable<Field> BlueStartFields => new[]
+        {
+            Fields[12],
+            Fields[13],
+            Fields[14],
+            Fields[15]
+        };
+
+        /// <summary>
+        ///     Creates the map for the user
+        /// </summary>
+        public override void Create()
+        {
+            var start = new FieldType {Character = 'h'};
+
+            var goal = new FieldType {Character = 'g'};
+
+            var standard = new FieldType {Character = 'o'};
 
 
             // SetFields(fields.ToArray());
 
-            var fields = new Field[]
+            var fields = new[]
             {
                 new Field(0, 0, "Start red", start),
                 new Field(1, 0, "Start red", start),
@@ -51,7 +78,7 @@ namespace MAEDN.Rules
                 new Field(2, 5, "Goal red", goal),
                 new Field(3, 5, "Goal red", goal),
                 new Field(4, 5, "Goal red", goal),
-            
+
                 new Field(5, 1, "Goal yellow", goal),
                 new Field(5, 2, "Goal yellow", goal),
                 new Field(5, 3, "Goal yellow", goal),
@@ -67,46 +94,46 @@ namespace MAEDN.Rules
                 new Field(8, 5, "Goal blue", goal),
                 new Field(9, 5, "Goal blue", goal),
 
-                new Field(0,4,standard),
-                new Field(1,4,standard),
-                new Field(2,4,standard),
-                new Field(3,4,standard),
-                new Field(4,4,standard),
-                new Field(4,3,standard),
-                new Field(4,2,standard),
-                new Field(4,1,standard),
-                new Field(4,0,standard),
-                new Field(5,0,standard),
-                new Field(6,0,standard),
-                new Field(6,1,standard),
-                new Field(6,2,standard),
-                new Field(6,3,standard),
-                new Field(6,4,standard),
-                new Field(7,4,standard),
-                new Field(8,4,standard),
-                new Field(9,4,standard),
-                new Field(10,4,standard),
-                new Field(10,5,standard),
-                new Field(10,6,standard),
-                new Field(9,6,standard),
-                new Field(8,6,standard),
-                new Field(7,6,standard),
-                new Field(6,6,standard),
-                new Field(6,7,standard),
-                new Field(6,8,standard),
-                new Field(6,9,standard),
-                new Field(6,10,standard),
-                new Field(5,10,standard),
-                new Field(4,10,standard),
-                new Field(4,9,standard),
-                new Field(4,8,standard),
-                new Field(4,7,standard),
-                new Field(4,6,standard),
-                new Field(3,6,standard),
-                new Field(2,6,standard),
-                new Field(1,6,standard),
-                new Field(0,6,standard),
-                new Field(0,5,standard)
+                new Field(0, 4, standard),
+                new Field(1, 4, standard),
+                new Field(2, 4, standard),
+                new Field(3, 4, standard),
+                new Field(4, 4, standard),
+                new Field(4, 3, standard),
+                new Field(4, 2, standard),
+                new Field(4, 1, standard),
+                new Field(4, 0, standard),
+                new Field(5, 0, standard),
+                new Field(6, 0, standard),
+                new Field(6, 1, standard),
+                new Field(6, 2, standard),
+                new Field(6, 3, standard),
+                new Field(6, 4, standard),
+                new Field(7, 4, standard),
+                new Field(8, 4, standard),
+                new Field(9, 4, standard),
+                new Field(10, 4, standard),
+                new Field(10, 5, standard),
+                new Field(10, 6, standard),
+                new Field(9, 6, standard),
+                new Field(8, 6, standard),
+                new Field(7, 6, standard),
+                new Field(6, 6, standard),
+                new Field(6, 7, standard),
+                new Field(6, 8, standard),
+                new Field(6, 9, standard),
+                new Field(6, 10, standard),
+                new Field(5, 10, standard),
+                new Field(4, 10, standard),
+                new Field(4, 9, standard),
+                new Field(4, 8, standard),
+                new Field(4, 7, standard),
+                new Field(4, 6, standard),
+                new Field(3, 6, standard),
+                new Field(2, 6, standard),
+                new Field(1, 6, standard),
+                new Field(0, 6, standard),
+                new Field(0, 5, standard)
             };
 
             SetFields(fields);
