@@ -1,4 +1,6 @@
 ﻿using System;
+using BrettSpielMeister.Output;
+using MAEDN.Rules;
 
 namespace MAEDN
 {
@@ -6,7 +8,13 @@ namespace MAEDN
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var map = new MaednMap();
+            map.Create();
+
+            var mapToConsole = new MapToConsole();
+            mapToConsole.Write(map);
+
+            Console.ReadKey();
         }
     }
 }
