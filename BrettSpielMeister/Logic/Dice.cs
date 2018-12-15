@@ -1,4 +1,5 @@
 ﻿using System;
+using BrettSpielMeister.States;
 
 namespace BrettSpielMeister.Logic
 {
@@ -6,17 +7,31 @@ namespace BrettSpielMeister.Logic
     {
         public Random Random;
 
-        public Dice(int maxNumber = 6)
+        private DiceState _diceState;
+
+        public Dice(DiceState diceState, int maxNumber = 6)
         {
+            _diceState = diceState;
             MaxNumber = maxNumber;
             Random = new Random();
         }
 
         public int MaxNumber { get; set; }
 
-        public int ThrowDice()
+        public void ThrowDice()
         {
-            return Random.Next(MaxNumber) + 1;
+            if (_diceState.IsDiced)
+            {
+                throw new InvalidOperationException("Dice is already diced");
+            }
+
+            _diceState.IsDiced = true;
+            _diceState.CurrentDiceValue = Random.Next(MaxNumber) + 1;
+        }
+
+        public void PickupDice()
+        {
+            _diceState.IsDiced = false;
         }
     }
 }

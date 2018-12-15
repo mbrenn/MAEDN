@@ -1,8 +1,9 @@
 ﻿using System;
+using BrettSpielMeister.Logic;
 
 namespace MAEDN.Rules
 {
-    public class MaednConfiguration
+    public class MaednConfiguration : GameConfiguration
     {
         private int _numberOfPlayers = 2;
 
