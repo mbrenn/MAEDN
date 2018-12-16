@@ -17,7 +17,7 @@ namespace MAEDN.Behaviors
 
         public override void PerformTurm(GameLogic gameLogic)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

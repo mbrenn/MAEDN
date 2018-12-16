@@ -1,4 +1,5 @@
-﻿using BrettSpielMeister.Actions;
+﻿using System;
+using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Logic.Rules;
 using BrettSpielMeister.Model;
@@ -26,23 +27,27 @@ namespace MAEDN.Rules
         public new MaednGame Game => (MaednGame) base.Game;
 
         public MaednMap Map => (MaednMap) Game.Map;
-
-        public override void InvokePlayerAction(PlayerAction action)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
+        /// <summary>
+        /// Initializes the figures
+        /// </summary>
         public override void Setup()
         {
+            // Initializes the rules
+            AddRule(x => x is DiceAction, new DiceActionHandler(new Dice( _gameState.DiceState)));
+
+            // Initializes the players
             var allStartFields = new[]
                 {Map.RedStartFields, Map.YellowStartFields, Map.BlueStartFields, Map.GreenStartFields};
             var playerCharacter = new[] {'r', 'y', 'b', 'g'};
+            var playerNames = new[] {"Red", "Yellow", "Blue", "Green"};
 
             for (var n = 0; n < _configuration.NumberOfPlayers; n++)
             {
                 var player = new Player
                 {
-                    Character = playerCharacter[n]
+                    Character = playerCharacter[n],
+                    Name = playerNames[n]
                 };
 
                 var startFields = allStartFields[n];
@@ -53,7 +58,6 @@ namespace MAEDN.Rules
                 }
 
                 AddPlayer(player, new MaednPlayerState());
-                Game.Players.Add(player);
             }
         }
 
@@ -65,12 +69,10 @@ namespace MAEDN.Rules
         public override void DoRound()
         {
             var nextPlayer = _playerSelection.GetNextPlayer();
+            
             var playerBehavior = new DefaultBehavior(nextPlayer);
+            Console.WriteLine( $"{nextPlayer} turn");
             playerBehavior.PerformTurm(this);
         }
-    }
-
-    public class MaednPlayerState : PlayerState
-    {
     }
 }

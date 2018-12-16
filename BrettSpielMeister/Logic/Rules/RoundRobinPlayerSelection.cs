@@ -24,8 +24,9 @@ namespace BrettSpielMeister.Logic.Rules
             }
 
             var result = _gameLogic.Game.Players[_currentPlayer];
-            _currentPlayer = _currentPlayer % _gameLogic.Game.Players.Count;
+            _currentPlayer = (_currentPlayer + 1) % _gameLogic.Game.Players.Count;
 
+            _gameLogic.GetGameState().CurrentPlayer = result;
             return result;
         }
     }

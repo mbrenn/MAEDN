@@ -7,7 +7,7 @@ namespace BrettSpielMeister.Logic
     {
         public Random Random;
 
-        private DiceState _diceState;
+        private readonly DiceState _diceState;
 
         public Dice(DiceState diceState, int maxNumber = 6)
         {
@@ -27,6 +27,8 @@ namespace BrettSpielMeister.Logic
 
             _diceState.IsDiced = true;
             _diceState.CurrentDiceValue = Random.Next(MaxNumber) + 1;
+
+            Console.WriteLine($"Dice: {_diceState.CurrentDiceValue}");
         }
 
         public void PickupDice()
