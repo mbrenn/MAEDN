@@ -1,4 +1,5 @@
-﻿using BrettSpielMeister.Logic;
+﻿using System;
+using BrettSpielMeister.Logic;
 using BrettSpielMeister.Model;
 
 namespace BrettSpielMeister.Actions
@@ -21,6 +22,8 @@ namespace BrettSpielMeister.Actions
         public override void Invoke(GameLogic logic, Player player, PlayerAction action)
         {
             Dice.ThrowDice();
+
+            Console.WriteLine($"Dice thrown: {Dice.DiceState.CurrentDiceValue}");
         }
     }
 }

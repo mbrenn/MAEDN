@@ -1,4 +1,6 @@
-﻿namespace BrettSpielMeister.Logic
+﻿using BrettSpielMeister.Actions;
+
+namespace BrettSpielMeister.Logic
 {
     public abstract class PlayerBehavior
     {
@@ -6,6 +8,6 @@
         /// Called when the player is requested to perform a turn
         /// </summary>
         /// <param name="gameLogic">Game Logic being used</param>
-        public abstract void PerformTurm(GameLogic gameLogic);
+        public abstract PlayerAction PerformTurm(GameLogic gameLogic);
     }
 }

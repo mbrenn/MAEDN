@@ -16,17 +16,17 @@ namespace BrettSpielMeister.Logic.Rules
             _gameLogic = gameLogic;
         }
 
-        public Player GetNextPlayer()
+        public PlayerSet GetNextPlayer()
         {
             if (_gameLogic.Game.Players.Count == 0)
             {
                 throw new InvalidOperationException("No player is given");
             }
 
-            var result = _gameLogic.Game.Players[_currentPlayer];
-            _currentPlayer = (_currentPlayer + 1) % _gameLogic.Game.Players.Count;
+            var result = _gameLogic.PlayerSets[_currentPlayer];
+            _currentPlayer = (_currentPlayer + 1) % _gameLogic.PlayerSets.Count;
 
-            _gameLogic.GetGameState().CurrentPlayer = result;
+            _gameLogic.GetGameState().CurrentPlayer = result.Player;
             return result;
         }
     }

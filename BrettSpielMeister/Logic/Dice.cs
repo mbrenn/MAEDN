@@ -7,11 +7,11 @@ namespace BrettSpielMeister.Logic
     {
         public Random Random;
 
-        private readonly DiceState _diceState;
+        public DiceState DiceState { get; }
 
         public Dice(DiceState diceState, int maxNumber = 6)
         {
-            _diceState = diceState;
+            DiceState = diceState;
             MaxNumber = maxNumber;
             Random = new Random();
         }
@@ -20,20 +20,20 @@ namespace BrettSpielMeister.Logic
 
         public void ThrowDice()
         {
-            if (_diceState.IsDiced)
+            if (DiceState.IsDiced)
             {
                 throw new InvalidOperationException("Dice is already diced");
             }
 
-            _diceState.IsDiced = true;
-            _diceState.CurrentDiceValue = Random.Next(MaxNumber) + 1;
+            DiceState.IsDiced = true;
+            DiceState.CurrentDiceValue = Random.Next(MaxNumber) + 1;
 
-            Console.WriteLine($"Dice: {_diceState.CurrentDiceValue}");
+            Console.WriteLine($"Dice: {DiceState.CurrentDiceValue}");
         }
 
         public void PickupDice()
         {
-            _diceState.IsDiced = false;
+            DiceState.IsDiced = false;
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Linq;
 using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Logic.Rules;
@@ -33,14 +35,19 @@ namespace MAEDN.Rules
         /// </summary>
         public override void Setup()
         {
-            // Initializes the rules
+            // Initializes the rule
+            _gameState.DiceState = new DiceState();
             AddRule(x => x is DiceAction, new DiceActionHandler(new Dice( _gameState.DiceState)));
 
             // Initializes the players
-            var allStartFields = new[]
-                {Map.RedStartFields, Map.YellowStartFields, Map.BlueStartFields, Map.GreenStartFields};
+            var allHomeFields = new[]
+                {Map.RedHomeFields, Map.YellowHomeFields, Map.BlueHomeFields, Map.GreenStartFields};
             var playerCharacter = new[] {'r', 'y', 'b', 'g'};
             var playerNames = new[] {"Red", "Yellow", "Blue", "Green"};
+            var allGoalFields = new[]
+                {Map.RedGoalFields, Map.YellowGoalFields, Map.BlueGoalFields, Map.GreenGoalFields};
+            var allStartFields = new[]
+                {Map.Fields[32], Map.Fields[42], Map.Fields[52], Map.Fields[62]};
 
             for (var n = 0; n < _configuration.NumberOfPlayers; n++)
             {
@@ -50,14 +57,20 @@ namespace MAEDN.Rules
                     Name = playerNames[n]
                 };
 
-                var startFields = allStartFields[n];
-                foreach (var field in startFields)
+                var homeFields = allHomeFields[n];
+                foreach (var field in homeFields)
                 {
                     var figure = new Figure {Field = field};
                     player.Figures.Add(figure);
                 }
 
-                AddPlayer(player, new MaednPlayerState());
+                AddPlayer(
+                    player, 
+                    new MaednPlayerState(
+                        allStartFields[n], 
+                        allHomeFields[n],
+                        allGoalFields[n]),
+                    new DefaultBehavior(player));
             }
         }
 
@@ -66,13 +79,81 @@ namespace MAEDN.Rules
             return _gameState;
         }
 
+        public void UpdatePlayerState(PlayerSet set)
+        {
+            UpdatePlayerState(set.Player, set.State);
+        }
+
+        public override void UpdatePlayerState(Player player, PlayerState playerState)
+        {
+            var maednPlayerState = (MaednPlayerState) playerState;
+            // Check, whether player has all persons in home
+            var allIn = true;
+            foreach (var figure in player.Figures)
+            {
+                if (!maednPlayerState.HomeFields.Contains(figure.Field))
+                {
+                    allIn = false;
+                }
+            }
+
+            maednPlayerState.IsCompletelyInHome = allIn;
+
+            // Check, whether player has all persons in home
+            allIn = true;
+            foreach (var figure in player.Figures)
+            {
+                if (!maednPlayerState.GoalFields.Contains(figure.Field))
+                {
+                    allIn = false;
+                }
+            }
+
+            maednPlayerState.IsCompletelyInGoal = allIn;
+        }
+
+        /// <summary>
+        /// Executes the round
+        /// </summary>
         public override void DoRound()
         {
-            var nextPlayer = _playerSelection.GetNextPlayer();
+            var currentPlayer = _playerSelection.GetNextPlayer();
+            var currentPlayerState = (MaednPlayerState) currentPlayer.State;
+            UpdatePlayerState(currentPlayer);
+            currentPlayerState.DicesInThisRound = 0;
             
-            var playerBehavior = new DefaultBehavior(nextPlayer);
-            Console.WriteLine( $"{nextPlayer} turn");
-            playerBehavior.PerformTurm(this);
+            // Gives information to console
+            Console.WriteLine($"{currentPlayer} turn");
+            currentPlayerState.ToConsole();
+            
+            TurnState = new TurnDiceState();
+
+            var action = currentPlayer.Behavior.PerformTurm(this);
+            Console.WriteLine($"Chosen action: {action}");
+            if (!EvaluateValidity(action))
+            {
+                throw new InvalidOperationException("Cheating detected");
+            }
+
+            InvokePlayerAction(currentPlayer.Player, action);
+        }
+
+        /// <summary>
+        /// Evaluates whether the current action is a valid action
+        /// </summary>
+        /// <param name="action">Action to be performed</param>
+        /// <returns>True, if the action is valid, otherwise not</returns>
+        private bool EvaluateValidity(PlayerAction action)
+        {
+            if (TurnState is TurnDiceState)
+            {
+                if (action is DiceAction)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace MAEDN.Rules
 {
     public class MaednMap : Map
     {
-        public IEnumerable<Field> RedStartFields => new[]
+        public IEnumerable<Field> RedHomeFields => new[]
         {
             Fields[0],
             Fields[1],
@@ -13,7 +13,7 @@ namespace MAEDN.Rules
             Fields[3]
         };
 
-        public IEnumerable<Field> YellowStartFields => new[]
+        public IEnumerable<Field> YellowHomeFields => new[]
         {
             Fields[4],
             Fields[5],
@@ -29,7 +29,7 @@ namespace MAEDN.Rules
             Fields[11]
         };
 
-        public IEnumerable<Field> BlueStartFields => new[]
+        public IEnumerable<Field> BlueHomeFields => new[]
         {
             Fields[12],
             Fields[13],
@@ -118,10 +118,10 @@ namespace MAEDN.Rules
                 new Field(5, 7, "Goal green", goal), // 26
                 new Field(5, 6, "Goal green", goal), // 27
 
-                new Field(6, 5, "Goal blue", goal),  // 28
-                new Field(7, 5, "Goal blue", goal),  // 29
-                new Field(8, 5, "Goal blue", goal),  // 30
-                new Field(9, 5, "Goal blue", goal),  // 31
+                new Field(9, 5, "Goal blue", goal),  // 28
+                new Field(8, 5, "Goal blue", goal),  // 29
+                new Field(7, 5, "Goal blue", goal),  // 30
+                new Field(6, 5, "Goal blue", goal),  // 31
 
                 new Field(0, 4, standard), // 32, red out
                 new Field(1, 4, standard), // 33

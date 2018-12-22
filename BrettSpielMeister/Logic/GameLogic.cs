@@ -11,8 +11,11 @@ namespace BrettSpielMeister.Logic
     public abstract class GameLogic
     {
         private readonly GameConfiguration _gameConfiguration;
-        private readonly Dictionary<Player, PlayerState> _playerStates = new Dictionary<Player, PlayerState>();
         private readonly List<ActionRuleItem> _rules = new List<ActionRuleItem>();
+
+        public TurnState TurnState { get; set; }
+
+        public List<PlayerSet> PlayerSets { get;  } = new List<PlayerSet>();
 
         public GameLogic(GameConfiguration gameConfiguration, Game game)
         {
@@ -31,11 +34,18 @@ namespace BrettSpielMeister.Logic
             _rules.Add(new ActionRuleItem(filter, rule));
         }
 
+        /// <summary>
+        /// Gets the player state of a certain player
+        /// </summary>
+        /// <param name="player">Player whose player state is queried</param>
+        /// <returns>The state of the player</returns>
         public PlayerState GetPlayerState(Player player)
         {
-            if (_playerStates.TryGetValue(player, out var playerState))
+            var foundPlayer = PlayerSets.FirstOrDefault(x => x.Player == player);
+            if (foundPlayer != null)
             {
-                return playerState;
+                UpdatePlayerState(player, foundPlayer.State);
+                return foundPlayer.State;
             }
 
             return null;
@@ -60,8 +70,6 @@ namespace BrettSpielMeister.Logic
 
             do
             {
-                var gameState = GetGameState();
-
                 DoRound();
                 currentRound++;
 
@@ -73,6 +81,8 @@ namespace BrettSpielMeister.Logic
 
             } while (currentRound < _gameConfiguration.MaximumRounds);
         }
+
+        public abstract void UpdatePlayerState(Player player, PlayerState playerState);
 
         public abstract GameState GetGameState();
 
@@ -99,9 +109,11 @@ namespace BrettSpielMeister.Logic
             }
         }
 
-        protected void AddPlayer(Player player, PlayerState playerState)
+        protected void AddPlayer(Player player, PlayerState playerState, PlayerBehavior behavior)
         {
-            _playerStates[player] = playerState;
+            var set = new PlayerSet(player, playerState, behavior);
+            PlayerSets.Add(set);
+
             Game.Players.Add(player);
         }
 
