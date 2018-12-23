@@ -27,6 +27,21 @@ namespace MAEDN.Behaviors
                 return new DiceAction();
             }
 
+            if (gameLogic.TurnState is TurnMoveFigureState)
+            {
+                var allowedTurns = _gameLogic.GetAllowedTurns();
+                if (allowedTurns.Count == 0)
+                {
+                    return new DoNothingAction();
+                }
+
+                var result = new MoveFigureAction(
+                    allowedTurns[0].Figure, 
+                    allowedTurns[0].TargetField);
+
+                return result;
+            }
+
             throw new InvalidOperationException("Player cannot handle current situation");
         }
     }

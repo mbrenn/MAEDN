@@ -23,7 +23,7 @@ namespace MAEDN.Rules
 
         public bool IsCompletelyInGoal { get; set; }
 
-        public bool HasBlockingHomeFunction { get; set; }
+        public bool HasBlocker { get; set; }
 
         /// <summary>
         /// Gets or sets the information whether the player may dice triple
@@ -42,12 +42,8 @@ namespace MAEDN.Rules
 
         public void ToConsole()
         {
-            Console.WriteLine($"Has Won   : {HasWon}");
-            Console.WriteLine($"Has Lost  : {HasLost}");
-            Console.WriteLine($"In Home   : {IsCompletelyInHome}");
-            Console.WriteLine($"In Goal   : {IsCompletelyInGoal}");
-            Console.WriteLine($"Dice 3x   : {MayDiceTriple}");
-            Console.WriteLine($"In Blocker: {HasBlockingHomeFunction}");
+            Console.WriteLine($"Has Won   : {HasWon}, Has Lost  : {HasLost}, In Home   : {IsCompletelyInHome}");
+            Console.WriteLine($"In Goal   : {IsCompletelyInGoal}, Dice 3x   : {MayDiceTriple}, In Blocker: {HasBlocker}");
             Console.WriteLine($"Last Dice6: {IsLastDiceASix}");
         }
     }

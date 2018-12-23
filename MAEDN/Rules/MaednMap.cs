@@ -69,6 +69,14 @@ namespace MAEDN.Rules
             Fields[31]
         };
 
+        public Field RedStartField => Fields[32];
+
+        public Field YellowStartField => Fields[42];
+
+        public Field GreenStartField => Fields[52];
+
+        public Field BlueStartField => Fields[62];
+
         /// <summary>
         /// Gets the fields on which the figures are moving
         /// </summary>

@@ -90,7 +90,40 @@ namespace Maedn.Test
             Assert.False(MaednLogic.AreFiguresPressedInGoalOrHome(firstPlayerSet));
         }
 
+        [Fact]
+        public void CheckAllowedMovementsIfNotDiced()
+        {
+            var game = GetMaednGame();
+            Assert.False(game.Dice.DiceState.IsDiced);
 
+            game.GameState.CurrentPlayer = game.Game.Players[0];
+
+            var allowedTurns = game.GetAllowedTurns();
+            Assert.Empty(allowedTurns);
+        }
+
+        [Fact]
+        public void CheckAllowedMovementsIfDiced()
+        {
+            var game = GetMaednGame();
+            Assert.False(game.Dice.DiceState.IsDiced);
+            game.Dice.DiceState.IsDiced = true;
+            game.Dice.DiceState.CurrentDiceValue = 5;
+
+            game.GameState.CurrentPlayer = game.Game.Players[0];
+
+            var allowedTurns = game.GetAllowedTurns();
+            Assert.Empty(allowedTurns);
+
+            game.Dice.DiceState.IsDiced = true;
+            game.Dice.DiceState.CurrentDiceValue = 6;
+
+            allowedTurns = game.GetAllowedTurns();
+            Assert.Equal(4, allowedTurns.Count);
+
+            var firstTurn = allowedTurns.ElementAt(0);
+            Assert.Equal(game.Map.RedStartField, firstTurn.TargetField);
+        }
 
         private static MaednLogic GetMaednGame()
         {

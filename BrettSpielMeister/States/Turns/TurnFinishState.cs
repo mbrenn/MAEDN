@@ -1,6 +1,6 @@
 ﻿namespace BrettSpielMeister.States
 {
-    public class TurnFinishTurnState : TurnState
+    public class TurnFinishState : TurnState
     {
         
     }

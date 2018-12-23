@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Linq;
 using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Logic.Rules;
 using BrettSpielMeister.Model;
+using BrettSpielMeister.Output;
 using BrettSpielMeister.States;
 using MAEDN.Behaviors;
 using MAEDN.States;
@@ -19,6 +20,8 @@ namespace MAEDN.Rules
 
         private readonly MaednGameState _gameState;
 
+        public Dice Dice { get; private set; }
+
         public override GameState GameState => _gameState;
 
         public new MaednGame Game => (MaednGame)base.Game;
@@ -29,7 +32,7 @@ namespace MAEDN.Rules
         {
             _configuration = configuration;
             _gameState = new MaednGameState();
-            _playerSelection = new RoundRobinPlayerSelection(this);;
+            _playerSelection = new RoundRobinPlayerSelection(this);
         }
         
         /// <summary>
@@ -39,7 +42,9 @@ namespace MAEDN.Rules
         {
             // Initializes the rule
             _gameState.DiceState = new DiceState();
-            AddRule(x => x is DiceAction, new DiceActionHandler(new Dice( _gameState.DiceState)));
+            Dice = new Dice(_gameState.DiceState);
+
+            AddRule(x => x is DiceAction, new DiceActionHandler(Dice));
 
             // Initializes the players
             var allHomeFields = new[]
@@ -124,65 +129,119 @@ namespace MAEDN.Rules
             // Chooses the next player
             var currentPlayer = _playerSelection.GetNextPlayer();
             var currentPlayerState = (MaednPlayerState) currentPlayer.State;
-            UpdatePlayerState(currentPlayer);
             currentPlayerState.DicesInThisRound = 0;
+            TurnState = new TurnDiceState();
             
             // Gives information to console
-            Console.WriteLine($"{currentPlayer} turn");
-            currentPlayerState.ToConsole();
-
             while (true)
             {
-                EvaluateTurnState();
-                if (TurnState is TurnFinishTurnState)
+                UpdatePlayerState(currentPlayer);
+
+                Console.WriteLine();
+                Console.WriteLine($"{currentPlayer.Player} turn");
+                currentPlayerState.ToConsole();
+                new MapToConsole().Write(Game);
+                
+                if (TurnState is TurnFinishState)
                 {
                     break;
                 }
 
                 var action = currentPlayer.Behavior.PerformTurn(this);
                 Console.WriteLine($"Chosen action: {action}");
+                Console.ReadKey();
 
-                if (!EvaluateValidity(action))
+                
+                switch (action)
                 {
-                    throw new InvalidOperationException("Cheating detected");
+                    case DiceAction _ when TurnState is TurnDiceState:
+                    {
+                        // Ok, throw the dice
+                        InvokePlayerAction(currentPlayer.Player, action);
+
+                        if (currentPlayerState.MayDiceTriple)
+                        {
+                            // User cannot move any figure. Figures in starting point
+                            // or pressed in goal 
+                            if (_gameState.DiceState.CurrentDiceValue != 6)
+                            {
+                                // Player cannot move figure, but may dice again
+                                currentPlayerState.DicesInThisRound++;
+                                if (currentPlayerState.DicesInThisRound == 3)
+                                {
+                                    new Dice(_gameState.DiceState).PickupDice();
+                                    TurnState = new TurnFinishState();
+                                }
+                                else
+                                {
+                                    // Revoke dice status and user may throw dice again
+                                    new Dice(_gameState.DiceState).PickupDice();
+                                    TurnState = new TurnDiceState();
+                                }
+                            }
+                            else
+                            {
+                                TurnState = new TurnMoveFigureState();
+                            }
+                        }
+                        else
+                        {
+                            // Player can move, will be decided in next action
+                            TurnState = new TurnMoveFigureState();
+                        }
+
+                        break;
+                    }
+                    case DiceAction _: 
+                        throw new InvalidOperationException("Dicing is not allowed");
+
+                    case MoveFigureAction moveAction when TurnState is TurnMoveFigureState:
+                        // Do something
+                        var valid = GetAllowedTurns().Any(
+                            x => x.Figure == moveAction.Figure && x.TargetField == moveAction.TargetField);
+                        if (!valid)
+                        {
+                            throw new InvalidOperationException("The chosen turn is now valid");
+                        }
+
+                        // Move figure
+                        moveAction.Figure.Field = moveAction.TargetField;
+
+                        Dice.PickupDice();
+                        if (Dice.DiceState.CurrentDiceValue == 6)
+                        {
+                            // User has diced a six, he may again
+                            TurnState = new TurnDiceState();
+                        }
+                        else
+                        {
+                            // User has ended
+                            TurnState = new TurnFinishState();
+                        }
+
+                        break;
+
+                    case MoveFigureAction _:
+                        throw new InvalidOperationException("Moving is not allowed");
+
+                    case DoNothingAction _:
+                        Dice.PickupDice();
+                        if (Dice.DiceState.CurrentDiceValue == 6)
+                        {
+                            // User has diced a six, he may again
+                            TurnState = new TurnDiceState();
+                        }
+                        else
+                        {
+                            // User has ended
+                            TurnState = new TurnFinishState();
+                        }
+                        break;
+
+                    default:
+                        throw new InvalidOperationException("Unknown action...");
                 }
-
-                InvokePlayerAction(currentPlayer.Player, action);
             }
-        }
-
-        /// <summary>
-        /// Evaluates the possible turn state of the game.
-        /// Dependent on whether the user already has diced or not 
-        /// </summary>
-        private void EvaluateTurnState()
-        {
-            if (_gameState.DiceState.IsDiced)
-            {
-                TurnState = new TurnMoveFigureState();
-            }
-            else
-            {
-                TurnState = new TurnDiceState();
-            }
-        }
-
-        /// <summary>
-        /// Evaluates whether the current action is a valid action
-        /// </summary>
-        /// <param name="action">Action to be performed</param>
-        /// <returns>True, if the action is valid, otherwise not</returns>
-        private bool EvaluateValidity(PlayerAction action)
-        {
-            if (TurnState is TurnDiceState)
-            {
-                if (action is DiceAction)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -193,7 +252,20 @@ namespace MAEDN.Rules
         /// <returns>True, if figure is in home</returns>
         public static bool IsFigureInHome(PlayerSet playerSet, Figure figure)
         {
-            return ((MaednPlayerState) (playerSet.State)).HomeFields.Contains(figure.Field);
+            return ((MaednPlayerState) playerSet.State).HomeFields.Contains(figure.Field);
+        }
+
+        /// <summary>
+        /// Checks, whether the player has any figure in the home
+        /// </summary>
+        /// <param name="playerSet">Player set to be evaluated</param>
+        /// <returns>true, if any of the figure is on home</returns>
+        public static bool IsAnyFigureInHome(PlayerSet playerSet)
+        {
+           return playerSet.Player.Figures.All(
+                figure => playerSet.State.GetMaednPlayerState()
+                    .HomeFields.Contains(figure.Field));
+
         }
 
         /// <summary>
@@ -204,7 +276,50 @@ namespace MAEDN.Rules
         /// <returns>True, if figure is in startfield</returns>
         public static bool IsFigureInStart(PlayerSet playerSet, Figure figure)
         {
-            return ((MaednPlayerState)(playerSet.State)).StartField == figure.Field;
+            return ((MaednPlayerState)playerSet.State).StartField == figure.Field;
+        }
+
+        /// <summary>
+        /// Checks whether the player has a figure on the starting field (block)
+        /// </summary>
+        /// <param name="player">Player to be evaluated</param>
+        /// <returns>true, if the player has figure on the starting field</returns>
+        public static bool HasFigureOnStartingField(PlayerSet player)
+        {
+            return HasFigureOnField(player, ((MaednPlayerState) player.State).StartField);
+        }
+
+        /// <summary>
+        /// Checks, if the player has a certain figure on the field
+        /// </summary>
+        /// <param name="player">Player to be evaluated</param>
+        /// <param name="field">Field to be evaluated</param>
+        /// <returns>true, if the given player has a figure on the field</returns>
+        public static bool HasFigureOnField(PlayerSet player, Field field)
+        {
+            return player.Player.Figures.Any(
+                x => x.Field == field);
+        }
+
+        /// <summary>
+        /// Checks, whether the given figure is a blocker. 
+        /// </summary>
+        /// <param name="playerSet">Player set to be evaluated</param>
+        /// <param name="figure">Figure of the player being checked</param>
+        /// <returns>true, if the figure is a blocker</returns>
+        public static bool IsFigureABlocker(PlayerSet playerSet, Figure figure)
+        {
+            if (figure.Field != ((MaednPlayerState) playerSet.State).StartField)
+            {
+                return false;
+            }
+
+            if (IsAnyFigureInHome(playerSet))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -215,7 +330,7 @@ namespace MAEDN.Rules
         /// <returns>True, if figure is in home</returns>
         public static bool IsFigureInGoal(PlayerSet playerSet, Figure figure)
         {
-            return ((MaednPlayerState)(playerSet.State)).GoalFields.Contains(figure.Field);
+            return ((MaednPlayerState)playerSet.State).GoalFields.Contains(figure.Field);
         }
 
         /// <summary>
@@ -245,6 +360,64 @@ namespace MAEDN.Rules
             }
 
             return true;
+        }
+
+        public List<AllowedTurn> GetAllowedTurns()
+        {
+            var result = new List<AllowedTurn>();
+            if (Dice.DiceState.IsDiced == false)
+            {
+                // Not diced, no action
+                return result;
+            }
+
+            var playerSet = GetPlayerSet(_gameState.CurrentPlayer);
+            var playerState = (MaednPlayerState) playerSet.State;
+            var isStartingFieldBlocked = HasFigureOnStartingField(playerSet);
+
+            var isPlayerObligedToLeaveHouse =
+                Dice.DiceState.CurrentDiceValue == 6 &&
+                !isStartingFieldBlocked
+                && IsAnyFigureInHome(playerSet);
+
+            // Check, if user HAS to leave his house. 
+            if (isPlayerObligedToLeaveHouse)
+            {
+                foreach (var figure in _gameState.CurrentPlayer.Figures)
+                {
+                    result.Add(
+                        new AllowedTurn(figure, playerState.StartField));
+                }
+
+                return result;
+            }
+            
+            // User can use any figure, as long as target field is not occupied by
+            // himself
+            foreach (var figure in _gameState.CurrentPlayer.Figures)
+            {
+                // Check, if user needs to leave his house, if yes, 
+                if (Dice.DiceState.CurrentDiceValue == 6
+                    && !isStartingFieldBlocked
+                    && IsFigureInHome(playerSet, figure))
+                {
+                    // Check, if starting field is not occupied by user
+                    result.Add(
+                        new AllowedTurn(figure, playerState.StartField));
+                }
+                else
+                if (isStartingFieldBlocked && !playerState.HasBlocker)
+                {
+
+                }
+            }
+
+            return result;
+        }
+
+        public PlayerSet GetPlayerSet(Player player)
+        {
+            return PlayerSets.FirstOrDefault(x => x.Player == player);
         }
     }
 }

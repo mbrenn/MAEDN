@@ -77,7 +77,8 @@ namespace BrettSpielMeister.Logic
                 currentRound++;
 
                 Console.WriteLine($"Round {currentRound} done.");
-                new MapToConsole().Write(Game);
+                Console.WriteLine($"---------------");
+
 
                 Console.ReadKey();
                 Console.WriteLine();

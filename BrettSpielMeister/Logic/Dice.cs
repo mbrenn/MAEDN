@@ -27,8 +27,6 @@ namespace BrettSpielMeister.Logic
 
             DiceState.IsDiced = true;
             DiceState.CurrentDiceValue = Random.Next(MaxNumber) + 1;
-
-            Console.WriteLine($"Dice: {DiceState.CurrentDiceValue}");
         }
 
         public void PickupDice()
