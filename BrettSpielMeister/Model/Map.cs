@@ -45,5 +45,11 @@ namespace BrettSpielMeister.Model
                 if (FieldConnections[fromIndex][n])
                     yield return Fields[n];
         }
+
+        public void Clear()
+        {
+            FieldConnections = null;
+            Fields = null;
+        }
     }
 }

@@ -17,6 +17,10 @@ namespace BrettSpielMeister.Logic
 
         public List<PlayerSet> PlayerSets { get;  } = new List<PlayerSet>();
 
+        public abstract GameState GameState { get; }
+
+        public Game Game { get; }
+
         public GameLogic(GameConfiguration gameConfiguration, Game game)
         {
             _gameConfiguration = gameConfiguration;
@@ -44,14 +48,12 @@ namespace BrettSpielMeister.Logic
             var foundPlayer = PlayerSets.FirstOrDefault(x => x.Player == player);
             if (foundPlayer != null)
             {
-                UpdatePlayerState(player, foundPlayer.State);
+                UpdatePlayerState(foundPlayer);
                 return foundPlayer.State;
             }
 
             return null;
         }
-
-        public Game Game { get; }
 
         /// <summary>
         /// Resets the game 
@@ -59,6 +61,7 @@ namespace BrettSpielMeister.Logic
         public void Reset()
         {
             Game.Players.Clear();
+            Game.Map.Clear();
         }
 
         public void Run()
@@ -82,9 +85,7 @@ namespace BrettSpielMeister.Logic
             } while (currentRound < _gameConfiguration.MaximumRounds);
         }
 
-        public abstract void UpdatePlayerState(Player player, PlayerState playerState);
-
-        public abstract GameState GetGameState();
+        public abstract PlayerState UpdatePlayerState(PlayerSet set);
 
         public abstract void DoRound();
 
@@ -126,7 +127,21 @@ namespace BrettSpielMeister.Logic
             }
 
             public Predicate<PlayerAction> Filter { get; }
+
             public PlayerActionHandler ActionRule { get; }
+        }
+
+        /// <summary>
+        /// Goes through the map and players and checks, if one of the figures
+        /// is on the stated field
+        /// </summary>
+        /// <param name="field">Field to be queried</param>
+        /// <returns>Found figure or null, if no figure is found</returns>
+        public Figure IsFigureOnField(Field field)
+        {
+            return Game.Players
+                .SelectMany(x => x.Figures)
+                .FirstOrDefault(x => x.Field == field);
         }
     }
 }

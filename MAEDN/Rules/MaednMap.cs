@@ -21,7 +21,7 @@ namespace MAEDN.Rules
             Fields[7]
         };
 
-        public IEnumerable<Field> GreenStartFields => new[]
+        public IEnumerable<Field> GreenHomeFields => new[]
         {
             Fields[8],
             Fields[9],
@@ -70,6 +70,20 @@ namespace MAEDN.Rules
         };
 
         /// <summary>
+        /// Gets the fields on which the figures are moving
+        /// </summary>
+        public IEnumerable<Field> MovingFields
+        {
+            get
+            {
+                for (var n = 32; n <= 71; n++)
+                {
+                    yield return Fields[n];
+                }
+            }
+        }
+
+        /// <summary>
         ///     Creates the map for the user
         /// </summary>
         public override void Create()
@@ -79,7 +93,6 @@ namespace MAEDN.Rules
             var goal = new FieldType {Character = 'g'};
 
             var standard = new FieldType {Character = 'o'};
-            
 
             var fields = new[]
             {
@@ -123,7 +136,7 @@ namespace MAEDN.Rules
                 new Field(7, 5, "Goal blue", goal),  // 30
                 new Field(6, 5, "Goal blue", goal),  // 31
 
-                new Field(0, 4, standard), // 32, red out
+                new Field(0, 4, standard), // 32, red block
                 new Field(1, 4, standard), // 33
                 new Field(2, 4, standard), // 34
                 new Field(3, 4, standard), // 35
@@ -132,8 +145,8 @@ namespace MAEDN.Rules
                 new Field(4, 2, standard), // 38
                 new Field(4, 1, standard), // 39
                 new Field(4, 0, standard), // 40
-                new Field(5, 0, standard), // 41
-                new Field(6, 0, standard), // 42, yellow out
+                new Field(5, 0, standard), // 41, yellow last
+                new Field(6, 0, standard), // 42, yellow block
                 new Field(6, 1, standard), // 43
                 new Field(6, 2, standard), // 44
                 new Field(6, 3, standard), // 45
@@ -142,7 +155,7 @@ namespace MAEDN.Rules
                 new Field(8, 4, standard), // 48
                 new Field(9, 4, standard), // 49
                 new Field(10, 4, standard),// 50
-                new Field(10, 5, standard),// 51
+                new Field(10, 5, standard),// 51, green last
                 new Field(10, 6, standard),// 52, green out
                 new Field(9, 6, standard), // 53
                 new Field(8, 6, standard), // 54
@@ -152,7 +165,7 @@ namespace MAEDN.Rules
                 new Field(6, 8, standard), // 58
                 new Field(6, 9, standard), // 59
                 new Field(6, 10, standard),// 60
-                new Field(5, 10, standard),// 61
+                new Field(5, 10, standard),// 61, blue last
                 new Field(4, 10, standard),// 62, blue out
                 new Field(4, 9, standard), // 63
                 new Field(4, 8, standard), // 64
@@ -162,7 +175,7 @@ namespace MAEDN.Rules
                 new Field(2, 6, standard), // 68
                 new Field(1, 6, standard), // 69
                 new Field(0, 6, standard), // 70
-                new Field(0, 5, standard)  // 71
+                new Field(0, 5, standard)  // 71, red last
             };
 
             SetFields(fields);

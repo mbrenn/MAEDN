@@ -34,6 +34,8 @@ namespace MAEDN.Rules
 
         public Field StartField { get; }
 
+        public bool IsLastDiceASix { get; }
+
         public IEnumerable<Field> HomeFields { get; }
 
         public IEnumerable<Field> GoalFields { get; }
@@ -46,6 +48,7 @@ namespace MAEDN.Rules
             Console.WriteLine($"In Goal   : {IsCompletelyInGoal}");
             Console.WriteLine($"Dice 3x   : {MayDiceTriple}");
             Console.WriteLine($"In Blocker: {HasBlockingHomeFunction}");
+            Console.WriteLine($"Last Dice6: {IsLastDiceASix}");
         }
     }
 }

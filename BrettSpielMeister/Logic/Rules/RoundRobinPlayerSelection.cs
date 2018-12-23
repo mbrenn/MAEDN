@@ -16,6 +16,10 @@ namespace BrettSpielMeister.Logic.Rules
             _gameLogic = gameLogic;
         }
 
+        /// <summary>
+        /// Gets the next player
+        /// </summary>
+        /// <returns>Defines the player, who is next in charge</returns>
         public PlayerSet GetNextPlayer()
         {
             if (_gameLogic.Game.Players.Count == 0)
@@ -26,7 +30,7 @@ namespace BrettSpielMeister.Logic.Rules
             var result = _gameLogic.PlayerSets[_currentPlayer];
             _currentPlayer = (_currentPlayer + 1) % _gameLogic.PlayerSets.Count;
 
-            _gameLogic.GetGameState().CurrentPlayer = result.Player;
+            _gameLogic.GameState.CurrentPlayer = result.Player;
             return result;
         }
     }
