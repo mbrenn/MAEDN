@@ -1,0 +1,4 @@
+[submodule "modules/BurnSystems"]
+	path = modules/BurnSystems
+	url = https://github.com/mbrenn/BurnSystems
+	branch = master
