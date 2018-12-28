@@ -90,6 +90,7 @@ namespace MAEDN.Rules
             maednPlayerState.IsCompletelyInHome = AreAllFiguresInHome(player, maednPlayerState);
             maednPlayerState.IsCompletelyInGoal = AreAllFiguresInGoal(player, maednPlayerState);
             maednPlayerState.MayDiceTriple = AreFiguresPressedInGoalOrHome(playerSet);
+            maednPlayerState.HasWon = maednPlayerState.IsCompletelyInGoal;
 
             return maednPlayerState;
         }
