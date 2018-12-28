@@ -144,5 +144,22 @@ namespace BrettSpielMeister.Logic
                 .SelectMany(x => x.Figures)
                 .FirstOrDefault(x => x.Field == field);
         }
+
+        public PlayerSet GetPlayerSet(Player player)
+        {
+            return PlayerSets.FirstOrDefault(x => x.Player == player);
+        }
+
+        /// <summary>
+        /// Checks, if the player has a certain figure on the field
+        /// </summary>
+        /// <param name="player">Player to be evaluated</param>
+        /// <param name="field">Field to be evaluated</param>
+        /// <returns>true, if the given player has a figure on the field</returns>
+        public static bool HasFigureOnField(PlayerSet player, Field field)
+        {
+            return player.Player.Figures.Any(
+                x => x.Field == field);
+        }
     }
 }

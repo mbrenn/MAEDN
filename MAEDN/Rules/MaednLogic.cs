@@ -288,19 +288,7 @@ namespace MAEDN.Rules
         {
             return HasFigureOnField(player, ((MaednPlayerState) player.State).StartField);
         }
-
-        /// <summary>
-        /// Checks, if the player has a certain figure on the field
-        /// </summary>
-        /// <param name="player">Player to be evaluated</param>
-        /// <param name="field">Field to be evaluated</param>
-        /// <returns>true, if the given player has a figure on the field</returns>
-        public static bool HasFigureOnField(PlayerSet player, Field field)
-        {
-            return player.Player.Figures.Any(
-                x => x.Field == field);
-        }
-
+        
         /// <summary>
         /// Checks, whether the given figure is a blocker. 
         /// </summary>
@@ -331,6 +319,89 @@ namespace MAEDN.Rules
         public static bool IsFigureInGoal(PlayerSet playerSet, Figure figure)
         {
             return ((MaednPlayerState)playerSet.State).GoalFields.Contains(figure.Field);
+        }
+
+        /// <summary>
+        /// Gets the next appropriating field of the player
+        /// </summary>
+        /// <param name="player">Player to be evaluated</param>
+        /// <param name="field">Field to be queried</param>
+        /// <returns>The next field or null, if there is no next field</returns>
+        public Field GetNextFieldForPlayer(PlayerSet player, Field field)
+        {
+            var movingFields = Map.MovingFields.ToList();
+            var position = movingFields.IndexOf(field);
+            if (position == -1)
+            {
+                // Field is not a moving field
+                if (player == null)
+                {
+                    // No player, so player is on invalid field
+                    return null;
+                }
+                else
+                {
+                    for (var n = 0; n < 4; n++)
+                    {
+                        var goalField = player.GetMaednPlayerState().GoalFields.ElementAt(n);
+                        if (goalField == field)
+                        {
+                            if (n == 3)
+                            {
+                                // Player is already on last goal field
+                                return null;
+                            }
+
+                            // Player is on a goal field and advances to the next field
+                            return player.GetMaednPlayerState().GoalFields.ElementAt(n + 1);
+                        }
+                    }
+
+                    // Player is not on moving fields and not on goal fields, so he
+                    // must be on one of the starting fields or he has cheated
+                    return null;
+                }
+
+            }
+
+            // If player is on a moving field, advance to the next moving field
+            position = (position + 1) % movingFields.Count;
+
+            var foundField = movingFields[position];
+            if (player == null)
+            {
+                return foundField;
+            }
+
+            // Player would be upon starting field.
+            if (foundField == 
+                player.GetMaednPlayerState().StartField)
+            {
+                foundField = player.GetMaednPlayerState().GoalFields.First();
+            }
+
+            return foundField;
+        }
+
+        /// <summary>
+        /// Forwards a several steps of fields for a certain player
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="field"></param>
+        /// <param name="steps"></param>
+        /// <returns></returns>
+        public Field GetNextFieldForPlayer(PlayerSet player, Field field, int steps)
+        {
+            for (var n = 0; n < steps; n++)
+            {
+                field = GetNextFieldForPlayer(player, field);
+                if (field == null)
+                {
+                    return null;
+                }
+            }
+
+            return field;
         }
 
         /// <summary>
@@ -380,7 +451,8 @@ namespace MAEDN.Rules
                 !isStartingFieldBlocked
                 && IsAnyFigureInHome(playerSet);
 
-            // Check, if user HAS to leave his house. 
+            // Check, if user HAS to leave his house because a six is diced and
+            // the starting field is free
             if (isPlayerObligedToLeaveHouse)
             {
                 foreach (var figure in _gameState.CurrentPlayer.Figures)
@@ -396,28 +468,27 @@ namespace MAEDN.Rules
             // himself
             foreach (var figure in _gameState.CurrentPlayer.Figures)
             {
-                // Check, if user needs to leave his house, if yes, 
-                if (Dice.DiceState.CurrentDiceValue == 6
-                    && !isStartingFieldBlocked
-                    && IsFigureInHome(playerSet, figure))
+                // Advance to the number of fields
+                var targetField = GetNextFieldForPlayer(
+                    playerSet, figure.Field, Dice.DiceState.CurrentDiceValue);
+                if (targetField == null)
                 {
-                    // Check, if starting field is not occupied by user
-                    result.Add(
-                        new AllowedTurn(figure, playerState.StartField));
+                    // Figure is in advance
+                    continue;
                 }
-                else
-                if (isStartingFieldBlocked && !playerState.HasBlocker)
-                {
 
+                // Check, if player has occupied the field itself
+                if (HasFigureOnField(playerSet, targetField))
+                {
+                    continue;
                 }
+
+                result.Add(new AllowedTurn(
+                    figure,
+                    targetField));
             }
 
             return result;
-        }
-
-        public PlayerSet GetPlayerSet(Player player)
-        {
-            return PlayerSets.FirstOrDefault(x => x.Player == player);
         }
     }
 }

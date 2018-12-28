@@ -124,66 +124,66 @@ namespace MAEDN.Rules
                 new Field(9, 10, "Start blue", start),  // 14
                 new Field(10, 10, "Start blue", start), // 15
 
-                new Field(1, 5, "Goal red", goal),  // 16
-                new Field(2, 5, "Goal red", goal),  // 17
-                new Field(3, 5, "Goal red", goal),  // 18
-                new Field(4, 5, "Goal red", goal),  // 19
+                new Field(1, 5, "Goal red 1", goal),  // 16
+                new Field(2, 5, "Goal red 2", goal),  // 17
+                new Field(3, 5, "Goal red 3", goal),  // 18
+                new Field(4, 5, "Goal red 4", goal),  // 19
+                
+                new Field(5, 1, "Goal yellow 1", goal), // 20
+                new Field(5, 2, "Goal yellow 2", goal), // 21
+                new Field(5, 3, "Goal yellow 3", goal), // 22
+                new Field(5, 4, "Goal yellow 4", goal), // 23
 
-                new Field(5, 1, "Goal yellow", goal), // 20
-                new Field(5, 2, "Goal yellow", goal), // 21
-                new Field(5, 3, "Goal yellow", goal), // 22
-                new Field(5, 4, "Goal yellow", goal), // 23
+                new Field(5, 9, "Goal green 1", goal), // 24
+                new Field(5, 8, "Goal green 2", goal), // 25
+                new Field(5, 7, "Goal green 3", goal), // 26
+                new Field(5, 6, "Goal green 4", goal), // 27
 
-                new Field(5, 9, "Goal green", goal), // 24
-                new Field(5, 8, "Goal green", goal), // 25
-                new Field(5, 7, "Goal green", goal), // 26
-                new Field(5, 6, "Goal green", goal), // 27
+                new Field(9, 5, "Goal blue 1", goal),  // 28
+                new Field(8, 5, "Goal blue 2", goal),  // 29
+                new Field(7, 5, "Goal blue 3", goal),  // 30
+                new Field(6, 5, "Goal blue 4", goal),  // 31
 
-                new Field(9, 5, "Goal blue", goal),  // 28
-                new Field(8, 5, "Goal blue", goal),  // 29
-                new Field(7, 5, "Goal blue", goal),  // 30
-                new Field(6, 5, "Goal blue", goal),  // 31
-
-                new Field(0, 4, standard), // 32, red block
-                new Field(1, 4, standard), // 33
-                new Field(2, 4, standard), // 34
-                new Field(3, 4, standard), // 35
-                new Field(4, 4, standard), // 36
-                new Field(4, 3, standard), // 37
-                new Field(4, 2, standard), // 38
-                new Field(4, 1, standard), // 39
-                new Field(4, 0, standard), // 40
-                new Field(5, 0, standard), // 41, yellow last
-                new Field(6, 0, standard), // 42, yellow block
-                new Field(6, 1, standard), // 43
-                new Field(6, 2, standard), // 44
-                new Field(6, 3, standard), // 45
-                new Field(6, 4, standard), // 46
-                new Field(7, 4, standard), // 47
-                new Field(8, 4, standard), // 48
-                new Field(9, 4, standard), // 49
-                new Field(10, 4, standard),// 50
-                new Field(10, 5, standard),// 51, green last
-                new Field(10, 6, standard),// 52, green out
-                new Field(9, 6, standard), // 53
-                new Field(8, 6, standard), // 54
-                new Field(7, 6, standard), // 55
-                new Field(6, 6, standard), // 56
-                new Field(6, 7, standard), // 57
-                new Field(6, 8, standard), // 58
-                new Field(6, 9, standard), // 59
-                new Field(6, 10, standard),// 60
-                new Field(5, 10, standard),// 61, blue last
-                new Field(4, 10, standard),// 62, blue out
-                new Field(4, 9, standard), // 63
-                new Field(4, 8, standard), // 64
-                new Field(4, 7, standard), // 65
-                new Field(4, 6, standard), // 66
-                new Field(3, 6, standard), // 67
-                new Field(2, 6, standard), // 68
-                new Field(1, 6, standard), // 69
-                new Field(0, 6, standard), // 70
-                new Field(0, 5, standard)  // 71, red last
+                new Field(0, 4, "Red 0", standard), // 32, red block
+                new Field(1, 4, "Red 1", standard), // 33
+                new Field(2, 4, "Red 2", standard), // 34
+                new Field(3, 4, "Red 3", standard), // 35
+                new Field(4, 4, "Red 4", standard), // 36
+                new Field(4, 3, "Red 5", standard), // 37
+                new Field(4, 2, "Red 6", standard), // 38
+                new Field(4, 1, "Red 7", standard), // 39
+                new Field(4, 0, "Red 8", standard), // 40
+                new Field(5, 0, "Red 9", standard), // 41, yellow last
+                new Field(6, 0, "Yellow 0", standard), // 42, yellow block
+                new Field(6, 1, "Yellow 1", standard), // 43
+                new Field(6, 2, "Yellow 2", standard), // 44
+                new Field(6, 3, "Yellow 3", standard), // 45
+                new Field(6, 4, "Yellow 4", standard), // 46
+                new Field(7, 4, "Yellow 5", standard), // 47
+                new Field(8, 4, "Yellow 6", standard), // 48
+                new Field(9, 4, "Yellow 7", standard), // 49
+                new Field(10, 4, "Yellow 8", standard),// 50
+                new Field(10, 5, "Yellow 9", standard),// 51, green last
+                new Field(10, 6, "Green 0", standard),// 52, green out
+                new Field(9, 6, "Green 1", standard), // 53
+                new Field(8, 6, "Green 2", standard), // 54
+                new Field(7, 6, "Green 3", standard), // 55
+                new Field(6, 6, "Green 4", standard), // 56
+                new Field(6, 7, "Green 5", standard), // 57
+                new Field(6, 8, "Green 6", standard), // 58
+                new Field(6, 9, "Green 7", standard), // 59
+                new Field(6, 10, "Green 8", standard),// 60
+                new Field(5, 10, "Green 9", standard),// 61, blue last
+                new Field(4, 10, "Blue 0", standard),// 62, blue out
+                new Field(4, 9, "Blue 1", standard), // 63
+                new Field(4, 8, "Blue 2", standard), // 64
+                new Field(4, 7, "Blue 3", standard), // 65
+                new Field(4, 6, "Blue 4", standard), // 66
+                new Field(3, 6, "Blue 5", standard), // 67
+                new Field(2, 6, "Blue 6", standard), // 68
+                new Field(1, 6, "Blue 7", standard), // 69
+                new Field(0, 6, "Blue 8", standard), // 70
+                new Field(0, 5, "Blue 9", standard)  // 71, red last
             };
 
             SetFields(fields);

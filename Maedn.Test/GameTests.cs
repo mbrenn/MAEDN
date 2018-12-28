@@ -103,7 +103,7 @@ namespace Maedn.Test
         }
 
         [Fact]
-        public void CheckAllowedMovementsIfDiced()
+        public void CheckAllowedMovementsWhenEverybodyIsAtHomeIfDiced()
         {
             var game = GetMaednGame();
             Assert.False(game.Dice.DiceState.IsDiced);
@@ -125,7 +125,37 @@ namespace Maedn.Test
             Assert.Equal(game.Map.RedStartField, firstTurn.TargetField);
         }
 
-        private static MaednLogic GetMaednGame()
+
+        [Fact]
+        public void CheckAllowedMovementsWhenAtStartingField()
+        {
+            var game = GetMaednGame();
+            Assert.False(game.Dice.DiceState.IsDiced);
+
+            // One figure on starting field
+            var currentPlayer = game.GameState.CurrentPlayer = game.Game.Players[0];
+            currentPlayer.Figures[0].Field = game.PlayerSets[0].GetMaednPlayerState().StartField;
+            
+            game.Dice.DiceState.IsDiced = true;
+            game.Dice.DiceState.CurrentDiceValue = 5;
+
+            var allowedTurns = game.GetAllowedTurns();
+            Assert.Single(allowedTurns);
+            Assert.Equal(game.Map.MovingFields.ElementAt(5), allowedTurns[0].TargetField);
+
+            currentPlayer.Figures[1].Field = game.Map.MovingFields.ElementAt(10);
+            allowedTurns = game.GetAllowedTurns();
+            Assert.Single(allowedTurns);
+            Assert.Equal(game.Map.MovingFields.ElementAt(5), allowedTurns[0].TargetField);
+
+            /*
+            currentPlayer.Figures[1].Field = game.Map.MovingFields.ElementAt(5);
+            allowedTurns = game.GetAllowedTurns();
+            Assert.Single(allowedTurns);
+            Assert.Equal(game.Map.MovingFields.ElementAt(10), allowedTurns[0].TargetField);
+        */}
+
+        public static MaednLogic GetMaednGame()
         {
             var game = new MaednLogic(new MaednConfiguration());
             game.Map.Create();
