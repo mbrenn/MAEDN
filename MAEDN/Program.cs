@@ -12,19 +12,20 @@ namespace MAEDN
         {
             // Initializes the log
             TheLog.FilterThreshold = LogLevel.Trace;
-            TheLog.AddProvider(new ConsoleProvider(), LogLevel.Debug);
-            TheLog.AddProvider(new FileProvider("maednlog.txt", true), LogLevel.Trace);
-            
-            // Runs the game
-            var gameLogic = new MaednLogic(new MaednConfiguration()
+            TheLog.AddProvider(new ConsoleProvider(), LogLevel.Error);
+            TheLog.AddProvider(new FileProvider("maednlog.txt", true), LogLevel.Info);
+
+            for (var n = 0; n < 1000; n++)
             {
-                NumberOfPlayers = 4
-            });
-            gameLogic.Run();
+                // Runs the game
+                var gameLogic = new MaednLogic(new MaednConfiguration
+                {
+                    NumberOfPlayers = 4
+                });
+                gameLogic.Run();
+            }
 
-            var mapToConsole = new MapToConsole();
-            mapToConsole.Write(gameLogic.Game, LogLevel.Info);
-
+            TheLog.Fatal("Done");
             Console.ReadKey();
         }
     }

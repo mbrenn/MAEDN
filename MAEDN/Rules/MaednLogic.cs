@@ -143,7 +143,6 @@ namespace MAEDN.Rules
 
                 ClassLogger.Debug($"{currentPlayer.Player} turn");
                 currentPlayerState.ToLogger();
-                new MapToConsole().Write(Game);
                 
                 if (TurnState is TurnFinishState)
                 {
@@ -221,7 +220,9 @@ namespace MAEDN.Rules
                         moveAction.Figure.Field = moveAction.TargetField;
 
                         Dice.PickupDice();
-                        if (Dice.DiceState.CurrentDiceValue == 6)
+
+                        UpdatePlayerState(currentPlayer);
+                        if (Dice.DiceState.CurrentDiceValue == 6 && !currentPlayer.GetMaednPlayerState().HasWon)
                         {
                             // User has diced a six, he may again
                             TurnState = new TurnDiceState();
@@ -231,6 +232,8 @@ namespace MAEDN.Rules
                             // User has ended
                             TurnState = new TurnFinishState();
                         }
+
+                        new MapToConsole().Write(Game);
 
                         break;
 
