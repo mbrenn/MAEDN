@@ -148,12 +148,12 @@ namespace Maedn.Test
             Assert.Single(allowedTurns);
             Assert.Equal(game.Map.MovingFields.ElementAt(5), allowedTurns[0].TargetField);
 
-            /*
+            
             currentPlayer.Figures[1].Field = game.Map.MovingFields.ElementAt(5);
             allowedTurns = game.GetAllowedTurns();
             Assert.Single(allowedTurns);
             Assert.Equal(game.Map.MovingFields.ElementAt(10), allowedTurns[0].TargetField);
-        */}
+        }
 
         public static MaednLogic GetMaednGame()
         {

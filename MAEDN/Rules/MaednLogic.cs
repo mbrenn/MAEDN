@@ -245,6 +245,28 @@ namespace MAEDN.Rules
         }
 
         /// <summary>
+        /// Gets the figure being on the given field by the player
+        /// </summary>
+        /// <param name="playerSet">Playerset to be evaluated</param>
+        /// <param name="field">Field to be queried</param>
+        /// <returns>The given figure, if figure is on the field, otherwise null</returns>
+        public static Figure GetFigureOnField(PlayerSet playerSet, Field field)
+        {
+            return playerSet.Player.Figures.FirstOrDefault(x => x.Field == field);
+        }
+
+        /// <summary>
+        /// Gets the figure of the field, not concerned about any player association
+        /// </summary>
+        /// <param name="game">Game being used</param>
+        /// <param name="field">Field to be used</param>
+        /// <returns></returns>
+        public static Figure GetFigureOnField(Game game, Field field)
+        {
+            return game.Players.SelectMany(x => x.Figures).FirstOrDefault(x => x.Field == field);
+        }
+
+        /// <summary>
         /// Checks, if the figure is in home 
         /// </summary>
         /// <param name="playerSet">Player to be queried</param>
@@ -444,11 +466,11 @@ namespace MAEDN.Rules
 
             var playerSet = GetPlayerSet(_gameState.CurrentPlayer);
             var playerState = (MaednPlayerState) playerSet.State;
-            var isStartingFieldBlocked = HasFigureOnStartingField(playerSet);
+            var hasFigureOnStartingField = HasFigureOnStartingField(playerSet);
 
             var isPlayerObligedToLeaveHouse =
                 Dice.DiceState.CurrentDiceValue == 6 &&
-                !isStartingFieldBlocked
+                !hasFigureOnStartingField
                 && IsAnyFigureInHome(playerSet);
 
             // Check, if user HAS to leave his house because a six is diced and
@@ -463,7 +485,7 @@ namespace MAEDN.Rules
 
                 return result;
             }
-            
+
             // User can use any figure, as long as target field is not occupied by
             // himself
             foreach (var figure in _gameState.CurrentPlayer.Figures)
@@ -481,6 +503,20 @@ namespace MAEDN.Rules
                 if (HasFigureOnField(playerSet, targetField))
                 {
                     continue;
+                }
+
+                // Checks, if the player has a figure on the starting field, which is not the blocker
+                // And checks whether this figure can move to the diced field. 
+                if (figure.Field == playerState.StartField && !playerState.HasBlocker)
+                {
+                    result.Clear();
+                    result.Add(new AllowedTurn(
+                        figure,
+                        targetField));
+
+                    // This is the only allowed move... free the starting field
+                    return result;
+
                 }
 
                 result.Add(new AllowedTurn(
