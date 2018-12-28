@@ -204,6 +204,14 @@ namespace MAEDN.Rules
                             throw new InvalidOperationException("The chosen turn is now valid");
                         }
 
+                        // Checks, if there is an opponent figure upon the field
+                        var (player, figure) = GetFigureOnField(moveAction.TargetField);
+                        if (player != null)
+                        {
+                            // Bring him back to home, Muahahahaha
+                            figure.Field = GetFreeHomeField(player);
+                        }
+
                         // Move figure
                         moveAction.Figure.Field = moveAction.TargetField;
 
@@ -261,9 +269,18 @@ namespace MAEDN.Rules
         /// <param name="game">Game being used</param>
         /// <param name="field">Field to be used</param>
         /// <returns></returns>
-        public static Figure GetFigureOnField(Game game, Field field)
+        public (PlayerSet, Figure) GetFigureOnField(Field field)
         {
-            return game.Players.SelectMany(x => x.Figures).FirstOrDefault(x => x.Field == field);
+            foreach (var playerSet in PlayerSets)
+            {
+                var foundFigure = playerSet.Player.Figures.FirstOrDefault(x => x.Field == field);
+                if (foundFigure != null)
+                {
+                    return (playerSet, foundFigure);
+                }
+            }
+
+            return (null,null);
         }
 
         /// <summary>
@@ -341,6 +358,17 @@ namespace MAEDN.Rules
         public static bool IsFigureInGoal(PlayerSet playerSet, Figure figure)
         {
             return ((MaednPlayerState)playerSet.State).GoalFields.Contains(figure.Field);
+        }
+
+        /// <summary>
+        /// Gets the first free home field of the player or null, if there is no free home field
+        /// </summary>
+        /// <param name="playerSet">PlayerSet to be evaluated</param>
+        /// <returns>The found field</returns>
+        public static Field GetFreeHomeField(PlayerSet playerSet)
+        {
+            return playerSet.GetMaednPlayerState().HomeFields.FirstOrDefault(
+                x => playerSet.Player.Figures.All(y => y.Field != x));
         }
 
         /// <summary>
