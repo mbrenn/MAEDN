@@ -1,11 +1,12 @@
-﻿using System;
-using BrettSpielMeister.Logic;
+﻿using BrettSpielMeister.Logic;
 using BrettSpielMeister.Model;
+using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Actions
 {
     public class DiceActionHandler : PlayerActionHandler
     {
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(DiceActionHandler));
         public DiceActionHandler(Dice dice)
         {
             Dice = dice;
@@ -22,8 +23,7 @@ namespace BrettSpielMeister.Actions
         public override void Invoke(GameLogic logic, Player player, PlayerAction action)
         {
             Dice.ThrowDice();
-
-            Console.WriteLine($"Dice thrown: {Dice.DiceState.CurrentDiceValue}");
+            ClassLogger.Debug($"Dice thrown: {Dice.DiceState.CurrentDiceValue}");
         }
     }
 }

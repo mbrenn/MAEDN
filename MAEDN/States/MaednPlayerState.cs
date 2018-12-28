@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BrettSpielMeister.Model;
 using BrettSpielMeister.States;
+using BurnSystems.Logging;
 
 namespace MAEDN.Rules
 {
@@ -10,6 +11,8 @@ namespace MAEDN.Rules
     /// </summary>
     public class MaednPlayerState : PlayerState
     {
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(MaednPlayerState));
+
         public MaednPlayerState(Field startField, IEnumerable<Field> homeFields, IEnumerable<Field> goalFields)
         {
             StartField = startField;
@@ -40,11 +43,11 @@ namespace MAEDN.Rules
 
         public IEnumerable<Field> GoalFields { get; }
 
-        public void ToConsole()
+        public void ToLogger()
         {
-            Console.WriteLine($"Has Won   : {HasWon}, Has Lost  : {HasLost}, In Home   : {IsCompletelyInHome}");
-            Console.WriteLine($"In Goal   : {IsCompletelyInGoal}, Dice 3x   : {MayDiceTriple}, In Blocker: {HasBlocker}");
-            Console.WriteLine($"Last Dice6: {IsLastDiceASix}");
+            ClassLogger.Trace($"Has Won   : {HasWon}, Has Lost  : {HasLost}, In Home   : {IsCompletelyInHome}");
+            ClassLogger.Trace($"In Goal   : {IsCompletelyInGoal}, Dice 3x   : {MayDiceTriple}, In Blocker: {HasBlocker}");
+            ClassLogger.Trace($"Last Dice6: {IsLastDiceASix}");
         }
     }
 }

@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BrettSpielMeister\BrettSpielMeister.csproj" />
+    <ProjectReference Include="..\modules\BurnSystems\src\BurnSystems\BurnSystems.csproj" />
   </ItemGroup>
 
 </Project>

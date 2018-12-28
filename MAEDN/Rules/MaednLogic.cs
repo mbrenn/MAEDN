@@ -7,6 +7,7 @@ using BrettSpielMeister.Logic.Rules;
 using BrettSpielMeister.Model;
 using BrettSpielMeister.Output;
 using BrettSpielMeister.States;
+using BurnSystems.Logging;
 using MAEDN.Behaviors;
 using MAEDN.States;
 
@@ -14,6 +15,8 @@ namespace MAEDN.Rules
 {
     public class MaednLogic : GameLogic
     {
+        private readonly ILogger ClassLogger = new ClassLogger(typeof(MaednLogic));
+
         private readonly RoundRobinPlayerSelection _playerSelection;
 
         private readonly MaednConfiguration _configuration;
@@ -49,7 +52,7 @@ namespace MAEDN.Rules
             // Initializes the players
             var allHomeFields = new[]
                 {Map.RedHomeFields, Map.YellowHomeFields, Map.BlueHomeFields, Map.GreenHomeFields};
-            var playerCharacter = new[] {'r', 'y', 'b', 'g'};
+            var playerCharacter = new[] {'R', 'Y', 'B', 'G'};
             var playerNames = new[] {"Red", "Yellow", "Blue", "Green"};
             var allGoalFields = new[]
                 {Map.RedGoalFields, Map.YellowGoalFields, Map.BlueGoalFields, Map.GreenGoalFields};
@@ -138,9 +141,8 @@ namespace MAEDN.Rules
             {
                 UpdatePlayerState(currentPlayer);
 
-                Console.WriteLine();
-                Console.WriteLine($"{currentPlayer.Player} turn");
-                currentPlayerState.ToConsole();
+                ClassLogger.Debug($"{currentPlayer.Player} turn");
+                currentPlayerState.ToLogger();
                 new MapToConsole().Write(Game);
                 
                 if (TurnState is TurnFinishState)
@@ -149,8 +151,7 @@ namespace MAEDN.Rules
                 }
 
                 var action = currentPlayer.Behavior.PerformTurn(this);
-                Console.WriteLine($"Chosen action: {action}");
-                Console.ReadKey();
+                ClassLogger.Debug($"Chosen action: {action}");
 
                 
                 switch (action)
@@ -194,6 +195,7 @@ namespace MAEDN.Rules
                         break;
                     }
                     case DiceAction _: 
+                        ClassLogger.Error("Dicing is not allowed");
                         throw new InvalidOperationException("Dicing is not allowed");
 
                     case MoveFigureAction moveAction when TurnState is TurnMoveFigureState:
@@ -202,15 +204,17 @@ namespace MAEDN.Rules
                             x => x.Figure == moveAction.Figure && x.TargetField == moveAction.TargetField);
                         if (!valid)
                         {
+                            ClassLogger.Error("The chosen turn is now valid");
                             throw new InvalidOperationException("The chosen turn is now valid");
                         }
 
                         // Checks, if there is an opponent figure upon the field
-                        var (player, figure) = GetFigureOnField(moveAction.TargetField);
-                        if (player != null)
+                        var (otherPlayer, figure) = GetFigureOnField(moveAction.TargetField);
+                        if (otherPlayer != null)
                         {
+                            ClassLogger.Debug($"'{currentPlayer.Player.Name}' throws out '{otherPlayer.Player.Name}'");
                             // Bring him back to home, Muahahahaha
-                            figure.Field = GetFreeHomeField(player);
+                            figure.Field = GetFreeHomeField(otherPlayer);
                         }
 
                         // Move figure
@@ -231,6 +235,7 @@ namespace MAEDN.Rules
                         break;
 
                     case MoveFigureAction _:
+                        ClassLogger.Error("Moving is not allowed");
                         throw new InvalidOperationException("Moving is not allowed");
 
                     case DoNothingAction _:
@@ -248,6 +253,7 @@ namespace MAEDN.Rules
                         break;
 
                     default:
+                        ClassLogger.Error("Unknown action...");
                         throw new InvalidOperationException("Unknown action...");
                 }
             }
@@ -302,7 +308,7 @@ namespace MAEDN.Rules
         /// <returns>true, if any of the figure is on home</returns>
         public static bool IsAnyFigureInHome(PlayerSet playerSet)
         {
-           return playerSet.Player.Figures.All(
+           return playerSet.Player.Figures.Any(
                 figure => playerSet.State.GetMaednPlayerState()
                     .HomeFields.Contains(figure.Field));
 
@@ -508,8 +514,11 @@ namespace MAEDN.Rules
             {
                 foreach (var figure in _gameState.CurrentPlayer.Figures)
                 {
-                    result.Add(
-                        new AllowedTurn(figure, playerState.StartField));
+                    if (IsFigureInHome(playerSet, figure))
+                    {
+                        result.Add(
+                            new AllowedTurn(figure, playerState.StartField));
+                    }
                 }
 
                 return result;

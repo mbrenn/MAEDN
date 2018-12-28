@@ -5,11 +5,14 @@ using BrettSpielMeister.Actions;
 using BrettSpielMeister.Model;
 using BrettSpielMeister.Output;
 using BrettSpielMeister.States;
+using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Logic
 {
     public abstract class GameLogic
     {
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(GameLogic));
+
         private readonly GameConfiguration _gameConfiguration;
         private readonly List<ActionRuleItem> _rules = new List<ActionRuleItem>();
 
@@ -70,20 +73,27 @@ namespace BrettSpielMeister.Logic
             Setup();
 
             var currentRound = 0;
+            var somebodyHasWon = false;
 
             do
             {
                 DoRound();
                 currentRound++;
 
-                Console.WriteLine($"Round {currentRound} done.");
-                Console.WriteLine($"---------------");
+                ClassLogger.Info($"Round {currentRound} done.");
 
+                foreach (var playerSet in PlayerSets)
+                {
+                    UpdatePlayerState(playerSet);
+                    if (playerSet.State.HasWon)
+                    {
+                        ClassLogger.Info($"{playerSet.Player.Name} has won!");
+                        somebodyHasWon = true;
+                        break;
+                    }
+                }
 
-                Console.ReadKey();
-                Console.WriteLine();
-
-            } while (currentRound < _gameConfiguration.MaximumRounds);
+            } while (currentRound < _gameConfiguration.MaximumRounds && !somebodyHasWon);
         }
 
         public abstract PlayerState UpdatePlayerState(PlayerSet set);
@@ -107,6 +117,7 @@ namespace BrettSpielMeister.Logic
             }
             else
             {
+                ClassLogger.Error($"Rule is not known: {action}");
                 throw new InvalidOperationException($"Rule is not known: {action}");
             }
         }

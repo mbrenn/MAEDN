@@ -2,6 +2,6 @@ namespace BrettSpielMeister.Logic
 {
     public class GameConfiguration
     {
-        public int MaximumRounds { get; set; } = 100;
+        public int MaximumRounds { get; set; } = 10000;
     }
 }

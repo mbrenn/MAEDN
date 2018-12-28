@@ -5,12 +5,14 @@ using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Model;
 using BrettSpielMeister.States;
+using BurnSystems.Logging;
 using MAEDN.Rules;
 
 namespace MAEDN.Behaviors
 {
-    class DefaultBehavior : PlayerBehavior
+    public class DefaultBehavior : PlayerBehavior
     {
+        private readonly ILogger ClassLogger = new ClassLogger(typeof(DefaultBehavior));
         private readonly MaednLogic _gameLogic;
         private readonly Player _player;
 
@@ -42,6 +44,7 @@ namespace MAEDN.Behaviors
                 return result;
             }
 
+            ClassLogger.Error("Player cannot handle current situation");
             throw new InvalidOperationException("Player cannot handle current situation");
         }
     }

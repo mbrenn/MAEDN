@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using BrettSpielMeister.Model;
+using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Logic.Rules
 {
     public class RoundRobinPlayerSelection
     {
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(RoundRobinPlayerSelection)); 
+
         private readonly GameLogic _gameLogic;
 
         private int _currentPlayer = 0;
@@ -24,6 +27,7 @@ namespace BrettSpielMeister.Logic.Rules
         {
             if (_gameLogic.Game.Players.Count == 0)
             {
+                ClassLogger.Error("No player is given");
                 throw new InvalidOperationException("No player is given");
             }
 

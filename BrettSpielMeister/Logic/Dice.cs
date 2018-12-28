@@ -1,10 +1,13 @@
 ﻿using System;
 using BrettSpielMeister.States;
+using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Logic
 {
     public class Dice
     {
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(Dice));
+
         public Random Random;
 
         public DiceState DiceState { get; }
@@ -22,6 +25,7 @@ namespace BrettSpielMeister.Logic
         {
             if (DiceState.IsDiced)
             {
+                ClassLogger.Error("Dice is already diced");
                 throw new InvalidOperationException("Dice is already diced");
             }
 

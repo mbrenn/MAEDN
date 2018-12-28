@@ -7,6 +7,18 @@ namespace MAEDN.Rules
     {
         private int _numberOfPlayers = 2;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the game is a single player game
+        /// </summary>
+        public bool IsSinglePlayerGame
+        {
+            get => _numberOfPlayers == 1;
+            set => _numberOfPlayers = value ? 1 : 2;
+        }
+
+        /// <summary>
+        /// Gets or sets the number of players within the game
+        /// </summary>
         public int NumberOfPlayers
         {
             get => _numberOfPlayers;

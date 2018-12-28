@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BrettSpielMeister.Model;
+using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Output
 {
@@ -9,11 +10,14 @@ namespace BrettSpielMeister.Output
     /// </summary>
     public class MapToConsole
     {
+        private static readonly ILogger ClassLogger =new ClassLogger(typeof(MapToConsole));
+
         /// <summary>
         ///     Writes the map to the console by going through each field and writing the characters
-        /// </summary>
-        /// <param name="map"></param>
-        public void Write(Game game)
+        /// </summary>am>
+        /// <param name="game">Game to be shown</param>
+        /// <param name="logLevel">Log Level to be evaluated</param>
+        public void Write(Game game, LogLevel logLevel = LogLevel.Debug)
         {
             var map = game.Map;
 
@@ -49,7 +53,7 @@ namespace BrettSpielMeister.Output
             {
                 var text = characters[n].Aggregate(string.Empty,
                     (target, item) => target + (item == 0 ? ' ' : item).ToString());
-                Console.WriteLine(text);
+                ClassLogger.Log(logLevel, text);
             }
         }
     }
