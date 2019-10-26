@@ -1,6 +1,6 @@
 public class FigureType
 {
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     public char Character { get; set; }
 
@@ -12,6 +12,6 @@ public class FigureType
 
     public override string ToString()
     {
-        return Name;
+        return Name ?? "No name";
     }
 }

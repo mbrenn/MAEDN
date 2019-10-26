@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using MAEDN.Rules;
 using Xunit;

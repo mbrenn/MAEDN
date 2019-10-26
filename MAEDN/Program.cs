@@ -1,5 +1,4 @@
 ﻿using System;
-using BrettSpielMeister.Output;
 using BurnSystems.Logging;
 using BurnSystems.Logging.Provider;
 using MAEDN.Rules;

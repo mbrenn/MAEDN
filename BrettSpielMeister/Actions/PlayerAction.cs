@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BrettSpielMeister.Actions
+﻿namespace BrettSpielMeister.Actions
 {
     public class PlayerAction
     {

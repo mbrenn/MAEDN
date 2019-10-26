@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BrettSpielMeister.Actions;
 using BrettSpielMeister.Model;
-using BrettSpielMeister.Output;
 using BrettSpielMeister.States;
 using BurnSystems.Logging;
 
@@ -16,7 +15,7 @@ namespace BrettSpielMeister.Logic
         private readonly GameConfiguration _gameConfiguration;
         private readonly List<ActionRuleItem> _rules = new List<ActionRuleItem>();
 
-        public TurnState TurnState { get; set; }
+        public TurnState? TurnState { get; set; }
 
         public List<PlayerSet> PlayerSets { get;  } = new List<PlayerSet>();
 
@@ -46,7 +45,7 @@ namespace BrettSpielMeister.Logic
         /// </summary>
         /// <param name="player">Player whose player state is queried</param>
         /// <returns>The state of the player</returns>
-        public PlayerState GetPlayerState(Player player)
+        public PlayerState? GetPlayerState(Player player)
         {
             var foundPlayer = PlayerSets.FirstOrDefault(x => x.Player == player);
             if (foundPlayer != null)

@@ -4,12 +4,12 @@
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public string Name { get; set; }
-        public FieldType FieldType { get; set; }
+        public string? Name { get; set; }
+        public FieldType? FieldType { get; set; }
 
         public override string ToString()
         {
-            return Name;
+            return Name ?? "No name";
         }
 
         public Field()

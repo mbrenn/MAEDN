@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Model;

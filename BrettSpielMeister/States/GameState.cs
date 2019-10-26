@@ -9,6 +9,6 @@ namespace BrettSpielMeister.States
         /// <summary>
         /// Gets or sets the player, who is currently in charge of the next action
         /// </summary>
-        public Player CurrentPlayer { get; set; }
+        public Player? CurrentPlayer { get; set; }
     }
 }

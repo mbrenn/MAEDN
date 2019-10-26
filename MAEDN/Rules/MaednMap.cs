@@ -7,75 +7,75 @@ namespace MAEDN.Rules
     {
         public IEnumerable<Field> RedHomeFields => new[]
         {
-            Fields[0],
-            Fields[1],
-            Fields[2],
-            Fields[3]
+            Fields![0],
+            Fields![1],
+            Fields![2],
+            Fields![3]
         };
 
         public IEnumerable<Field> YellowHomeFields => new[]
         {
-            Fields[4],
-            Fields[5],
-            Fields[6],
-            Fields[7]
+            Fields![4],
+            Fields![5],
+            Fields![6],
+            Fields![7]
         };
 
         public IEnumerable<Field> GreenHomeFields => new[]
         {
-            Fields[8],
-            Fields[9],
-            Fields[10],
-            Fields[11]
+            Fields![8],
+            Fields![9],
+            Fields![10],
+            Fields![11]
         };
 
         public IEnumerable<Field> BlueHomeFields => new[]
         {
-            Fields[12],
-            Fields[13],
-            Fields[14],
-            Fields[15]
+            Fields![12],
+            Fields![13],
+            Fields![14],
+            Fields![15]
         };
 
         public IEnumerable<Field> RedGoalFields => new[]
         {
-            Fields[16],
-            Fields[17],
-            Fields[18],
-            Fields[19]
+            Fields![16],
+            Fields![17],
+            Fields![18],
+            Fields![19]
         };
 
         public IEnumerable<Field> YellowGoalFields => new[]
         {
-            Fields[20],
-            Fields[21],
-            Fields[22],
-            Fields[23]
+            Fields![20],
+            Fields![21],
+            Fields![22],
+            Fields![23]
         };
 
         public IEnumerable<Field> GreenGoalFields => new[]
         {
-            Fields[24],
-            Fields[25],
-            Fields[26],
-            Fields[27]
+            Fields![24],
+            Fields![25],
+            Fields![26],
+            Fields![27]
         };
 
         public IEnumerable<Field> BlueGoalFields => new[]
         {
-            Fields[28],
-            Fields[29],
-            Fields[30],
-            Fields[31]
+            Fields![28],
+            Fields![29],
+            Fields![30],
+            Fields![31]
         };
 
-        public Field RedStartField => Fields[32];
+        public Field RedStartField => Fields![32];
 
-        public Field YellowStartField => Fields[42];
+        public Field YellowStartField => Fields![42];
 
-        public Field GreenStartField => Fields[52];
+        public Field GreenStartField => Fields![52];
 
-        public Field BlueStartField => Fields[62];
+        public Field BlueStartField => Fields![62];
 
         /// <summary>
         /// Gets the fields on which the figures are moving
@@ -86,7 +86,7 @@ namespace MAEDN.Rules
             {
                 for (var n = 32; n <= 71; n++)
                 {
-                    yield return Fields[n];
+                    yield return Fields![n];
                 }
             }
         }

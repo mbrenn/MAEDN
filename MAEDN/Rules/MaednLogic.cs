@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BrettSpielMeister.Actions;
+﻿using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Logic.Rules;
 using BrettSpielMeister.Model;
@@ -10,12 +7,15 @@ using BrettSpielMeister.States;
 using BurnSystems.Logging;
 using MAEDN.Behaviors;
 using MAEDN.States;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MAEDN.Rules
 {
     public class MaednLogic : GameLogic
     {
-        private readonly ILogger ClassLogger = new ClassLogger(typeof(MaednLogic));
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(MaednLogic));
 
         private readonly RoundRobinPlayerSelection _playerSelection;
 
@@ -23,13 +23,13 @@ namespace MAEDN.Rules
 
         private readonly MaednGameState _gameState;
 
-        public Dice Dice { get; private set; }
+        public Dice? Dice { get; private set; }
 
         public override GameState GameState => _gameState;
 
-        public new MaednGame Game => (MaednGame)base.Game;
+        public new MaednGame Game => (MaednGame) base.Game;
 
-        public MaednMap Map => (MaednMap)Game.Map;
+        public MaednMap Map => (MaednMap) Game.Map;
 
         public MaednLogic(MaednConfiguration configuration) : base(configuration, new MaednGame())
         {
@@ -37,7 +37,7 @@ namespace MAEDN.Rules
             _gameState = new MaednGameState();
             _playerSelection = new RoundRobinPlayerSelection(this);
         }
-        
+
         /// <summary>
         /// Initializes the figures
         /// </summary>
@@ -57,7 +57,7 @@ namespace MAEDN.Rules
             var allGoalFields = new[]
                 {Map.RedGoalFields, Map.YellowGoalFields, Map.BlueGoalFields, Map.GreenGoalFields};
             var allStartFields = new[]
-                {Map.Fields[32], Map.Fields[42], Map.Fields[52], Map.Fields[62]};
+                {Map.Fields![32], Map.Fields![42], Map.Fields![52], Map.Fields![62]};
 
             for (var n = 0; n < _configuration.NumberOfPlayers; n++)
             {
@@ -75,9 +75,9 @@ namespace MAEDN.Rules
                 }
 
                 AddPlayer(
-                    player, 
+                    player,
                     new MaednPlayerState(
-                        allStartFields[n], 
+                        allStartFields[n],
                         allHomeFields[n],
                         allGoalFields[n]),
                     new DefaultBehavior(this, player));
@@ -130,12 +130,15 @@ namespace MAEDN.Rules
         /// </summary>
         public override void DoRound()
         {
+            if (Dice == null) throw new InvalidOperationException("Dice == null");
+            if (_gameState.DiceState == null) throw new InvalidOperationException("_gameState.DiceState == null");
+
             // Chooses the next player
             var currentPlayer = _playerSelection.GetNextPlayer();
             var currentPlayerState = (MaednPlayerState) currentPlayer.State;
             currentPlayerState.DicesInThisRound = 0;
             TurnState = new TurnDiceState();
-            
+
             // Gives information to console
             while (true)
             {
@@ -143,7 +146,7 @@ namespace MAEDN.Rules
 
                 ClassLogger.Debug($"{currentPlayer.Player} turn");
                 currentPlayerState.ToLogger();
-                
+
                 if (TurnState is TurnFinishState)
                 {
                     break;
@@ -152,7 +155,6 @@ namespace MAEDN.Rules
                 var action = currentPlayer.Behavior.PerformTurn(this);
                 ClassLogger.Debug($"Chosen action: {action}");
 
-                
                 switch (action)
                 {
                     case DiceAction _ when TurnState is TurnDiceState:
@@ -193,7 +195,7 @@ namespace MAEDN.Rules
 
                         break;
                     }
-                    case DiceAction _: 
+                    case DiceAction _:
                         ClassLogger.Error("Dicing is not allowed");
                         throw new InvalidOperationException("Dicing is not allowed");
 
@@ -209,9 +211,10 @@ namespace MAEDN.Rules
 
                         // Checks, if there is an opponent figure upon the field
                         var (otherPlayer, figure) = GetFigureOnField(moveAction.TargetField);
-                        if (otherPlayer != null)
+                        if (otherPlayer != null && figure != null)
                         {
                             ClassLogger.Debug($"'{currentPlayer.Player.Name}' throws out '{otherPlayer.Player.Name}'");
+
                             // Bring him back to home, Muahahahaha
                             figure.Field = GetFreeHomeField(otherPlayer);
                         }
@@ -253,6 +256,7 @@ namespace MAEDN.Rules
                             // User has ended
                             TurnState = new TurnFinishState();
                         }
+
                         break;
 
                     default:
@@ -276,10 +280,9 @@ namespace MAEDN.Rules
         /// <summary>
         /// Gets the figure of the field, not concerned about any player association
         /// </summary>
-        /// <param name="game">Game being used</param>
         /// <param name="field">Field to be used</param>
         /// <returns></returns>
-        public (PlayerSet, Figure) GetFigureOnField(Field field)
+        public (PlayerSet?, Figure?) GetFigureOnField(Field field)
         {
             foreach (var playerSet in PlayerSets)
             {
@@ -290,7 +293,7 @@ namespace MAEDN.Rules
                 }
             }
 
-            return (null,null);
+            return (null, null);
         }
 
         /// <summary>
@@ -311,10 +314,9 @@ namespace MAEDN.Rules
         /// <returns>true, if any of the figure is on home</returns>
         public static bool IsAnyFigureInHome(PlayerSet playerSet)
         {
-           return playerSet.Player.Figures.Any(
+            return playerSet.Player.Figures.Any(
                 figure => playerSet.State.GetMaednPlayerState()
                     .HomeFields.Contains(figure.Field));
-
         }
 
         /// <summary>
@@ -325,7 +327,7 @@ namespace MAEDN.Rules
         /// <returns>True, if figure is in startfield</returns>
         public static bool IsFigureInStart(PlayerSet playerSet, Figure figure)
         {
-            return ((MaednPlayerState)playerSet.State).StartField == figure.Field;
+            return ((MaednPlayerState) playerSet.State).StartField == figure.Field;
         }
 
         /// <summary>
@@ -337,7 +339,7 @@ namespace MAEDN.Rules
         {
             return HasFigureOnField(player, ((MaednPlayerState) player.State).StartField);
         }
-        
+
         /// <summary>
         /// Checks, whether the given figure is a blocker. 
         /// </summary>
@@ -367,7 +369,7 @@ namespace MAEDN.Rules
         /// <returns>True, if figure is in home</returns>
         public static bool IsFigureInGoal(PlayerSet playerSet, Figure figure)
         {
-            return ((MaednPlayerState)playerSet.State).GoalFields.Contains(figure.Field);
+            return ((MaednPlayerState) playerSet.State).GoalFields.Contains(figure.Field);
         }
 
         /// <summary>
@@ -387,7 +389,7 @@ namespace MAEDN.Rules
         /// <param name="player">Player to be evaluated</param>
         /// <param name="field">Field to be queried</param>
         /// <returns>The next field or null, if there is no next field</returns>
-        public Field GetNextFieldForPlayer(PlayerSet player, Field field)
+        public Field? GetNextFieldForPlayer(PlayerSet player, Field field)
         {
             var movingFields = Map.MovingFields.ToList();
             var position = movingFields.IndexOf(field);
@@ -399,29 +401,26 @@ namespace MAEDN.Rules
                     // No player, so player is on invalid field
                     return null;
                 }
-                else
+
+                for (var n = 0; n < 4; n++)
                 {
-                    for (var n = 0; n < 4; n++)
+                    var goalField = player.GetMaednPlayerState().GoalFields.ElementAt(n);
+                    if (goalField == field)
                     {
-                        var goalField = player.GetMaednPlayerState().GoalFields.ElementAt(n);
-                        if (goalField == field)
+                        if (n == 3)
                         {
-                            if (n == 3)
-                            {
-                                // Player is already on last goal field
-                                return null;
-                            }
-
-                            // Player is on a goal field and advances to the next field
-                            return player.GetMaednPlayerState().GoalFields.ElementAt(n + 1);
+                            // Player is already on last goal field
+                            return null;
                         }
-                    }
 
-                    // Player is not on moving fields and not on goal fields, so he
-                    // must be on one of the starting fields or he has cheated
-                    return null;
+                        // Player is on a goal field and advances to the next field
+                        return player.GetMaednPlayerState().GoalFields.ElementAt(n + 1);
+                    }
                 }
 
+                // Player is not on moving fields and not on goal fields, so he
+                // must be on one of the starting fields or he has cheated
+                return null;
             }
 
             // If player is on a moving field, advance to the next moving field
@@ -434,7 +433,7 @@ namespace MAEDN.Rules
             }
 
             // Player would be upon starting field.
-            if (foundField == 
+            if (foundField ==
                 player.GetMaednPlayerState().StartField)
             {
                 foundField = player.GetMaednPlayerState().GoalFields.First();
@@ -450,18 +449,20 @@ namespace MAEDN.Rules
         /// <param name="field"></param>
         /// <param name="steps"></param>
         /// <returns></returns>
-        public Field GetNextFieldForPlayer(PlayerSet player, Field field, int steps)
+        public Field? GetNextFieldForPlayer(PlayerSet player, Field field, int steps)
         {
+            Field? result = field;
             for (var n = 0; n < steps; n++)
             {
-                field = GetNextFieldForPlayer(player, field);
-                if (field == null)
+                if (result == null)
                 {
                     return null;
                 }
+
+                result = GetNextFieldForPlayer(player, result);
             }
 
-            return field;
+            return result;
         }
 
         /// <summary>
@@ -495,6 +496,10 @@ namespace MAEDN.Rules
 
         public List<AllowedTurn> GetAllowedTurns()
         {
+            if (Dice == null) throw new InvalidOperationException("Dice == null");
+            if (_gameState?.CurrentPlayer == null) throw new InvalidOperationException("_gameState == null");
+                
+            
             var result = new List<AllowedTurn>();
             if (Dice.DiceState.IsDiced == false)
             {
@@ -531,9 +536,14 @@ namespace MAEDN.Rules
             // himself
             foreach (var figure in _gameState.CurrentPlayer.Figures)
             {
+                if (figure.Field == null) throw new InvalidOperationException("figure.Field == null");
+                
                 // Advance to the number of fields
                 var targetField = GetNextFieldForPlayer(
-                    playerSet, figure.Field, Dice.DiceState.CurrentDiceValue);
+                    playerSet, 
+                    figure.Field,
+                    Dice.DiceState.CurrentDiceValue);
+                
                 if (targetField == null)
                 {
                     // Figure is in advance

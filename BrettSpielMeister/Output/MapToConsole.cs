@@ -20,6 +20,8 @@ namespace BrettSpielMeister.Output
         public void Write(Game game, LogLevel logLevel = LogLevel.Debug)
         {
             var map = game.Map;
+            if (map == null) throw new InvalidOperationException("map == null");
+            if (map.Fields == null) throw new InvalidOperationException("map.Fields == null");
 
             var maxX = map.Fields.Max(x => x.X) + 1;
             var maxY = map.Fields.Max(x => x.Y) + 1;

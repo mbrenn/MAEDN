@@ -5,9 +5,9 @@ namespace BrettSpielMeister.Model
 {
     public class Map
     {
-        public Field[] Fields { get; private set; }
+        public Field[]? Fields { get; private set; }
 
-        public bool[][] FieldConnections { get; private set; }
+        public bool[][]? FieldConnections { get; private set; }
 
         public virtual void Create()
         {
@@ -22,27 +22,34 @@ namespace BrettSpielMeister.Model
 
         public void AddConnection(Field from, Field to)
         {
+            if (FieldConnections == null) throw new InvalidOperationException("FieldConnections == null");
+
             var fromIndex = Array.IndexOf(Fields, from);
             var toIndex = Array.IndexOf(Fields, to);
             if (fromIndex == -1 || toIndex == -1) return;
 
-            FieldConnections[fromIndex][toIndex] = true;
+            FieldConnections[fromIndex]![toIndex] = true;
         }
 
         public bool IsConnected(Field from, Field to)
         {
+            if (FieldConnections == null) throw new InvalidOperationException("FieldConnections == null");
+
             var fromIndex = Array.IndexOf(Fields, from);
             var toIndex = Array.IndexOf(Fields, to);
             if (fromIndex == -1 || toIndex == -1) return false;
 
-            return FieldConnections[fromIndex][toIndex];
+            return FieldConnections[fromIndex]![toIndex];
         }
 
         public IEnumerable<Field> GetConnections(Field from)
         {
+            if (FieldConnections == null) throw new InvalidOperationException("FieldConnections == null");
+            if (Fields == null) throw new InvalidOperationException("Fields == null");
+
             var fromIndex = Array.IndexOf(Fields, from);
             for (var n = 0; n < Fields.Length; n++)
-                if (FieldConnections[fromIndex][n])
+                if (FieldConnections[fromIndex]![n])
                     yield return Fields[n];
         }
 

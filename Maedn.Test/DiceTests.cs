@@ -1,5 +1,4 @@
-﻿using System;
-using BrettSpielMeister.Logic;
+﻿using BrettSpielMeister.Logic;
 using BrettSpielMeister.States;
 using Xunit;
 using Xunit.Abstractions;

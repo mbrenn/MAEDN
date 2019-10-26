@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BrettSpielMeister.Model;
 using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Logic.Rules

@@ -7,15 +7,15 @@
             FigureType = FigureType.Default;
         }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public FigureType FigureType { get; set; }
+        public FigureType? FigureType { get; set; }
 
-        public Field Field { get; set; }
+        public Field? Field { get; set; }
 
         public override string ToString()
         {
-            return Name;
+            return Name ?? "No name";
         }
     }
 }
