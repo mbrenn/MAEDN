@@ -4,6 +4,7 @@ using System.Linq;
 using BrettSpielMeister.Actions;
 using BrettSpielMeister.Model;
 using BrettSpielMeister.States;
+using BrettSpielMeister.States.Turns;
 using BurnSystems.Logging;
 
 namespace BrettSpielMeister.Logic
@@ -148,14 +149,14 @@ namespace BrettSpielMeister.Logic
         /// </summary>
         /// <param name="field">Field to be queried</param>
         /// <returns>Found figure or null, if no figure is found</returns>
-        public Figure IsFigureOnField(Field field)
+        public Figure? IsFigureOnField(Field field)
         {
             return Game.Players
                 .SelectMany(x => x.Figures)
                 .FirstOrDefault(x => x.Field == field);
         }
 
-        public PlayerSet GetPlayerSet(Player player)
+        public PlayerSet? GetPlayerSet(Player player)
         {
             return PlayerSets.FirstOrDefault(x => x.Player == player);
         }

@@ -1,5 +1,6 @@
 using System.Linq;
 using MAEDN.Rules;
+using MAEDN.States;
 using Xunit;
 
 namespace Maedn.Test
@@ -23,6 +24,7 @@ namespace Maedn.Test
 
             var firstFigure = game.PlayerSets[0].Player.Figures[0];
             var state = (MaednPlayerState) game.UpdatePlayerState(game.PlayerSets[0]);
+            Assert.True(state != null);
             Assert.True(MaednLogic.IsFigureInHome(game.PlayerSets[0], firstFigure));
 
             firstFigure.Field = game.Map.MovingFields.ElementAt(3);

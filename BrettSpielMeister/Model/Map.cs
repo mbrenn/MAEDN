@@ -23,6 +23,7 @@ namespace BrettSpielMeister.Model
         public void AddConnection(Field from, Field to)
         {
             if (FieldConnections == null) throw new InvalidOperationException("FieldConnections == null");
+            if (Fields == null) throw new InvalidOperationException("Fields == null");
 
             var fromIndex = Array.IndexOf(Fields, from);
             var toIndex = Array.IndexOf(Fields, to);
@@ -34,6 +35,7 @@ namespace BrettSpielMeister.Model
         public bool IsConnected(Field from, Field to)
         {
             if (FieldConnections == null) throw new InvalidOperationException("FieldConnections == null");
+            if (Fields == null) throw new InvalidOperationException("Fields == null");
 
             var fromIndex = Array.IndexOf(Fields, from);
             var toIndex = Array.IndexOf(Fields, to);

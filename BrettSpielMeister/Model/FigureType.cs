@@ -1,17 +1,20 @@
-public class FigureType
+namespace BrettSpielMeister.Model
 {
-    public string? Name { get; set; }
-
-    public char Character { get; set; }
-
-    public static FigureType Default => new FigureType
+    public class FigureType
     {
-        Name = "Default",
-        Character = 'f'
-    };
+        public string? Name { get; set; }
 
-    public override string ToString()
-    {
-        return Name ?? "No name";
+        public char Character { get; set; }
+
+        public static FigureType Default => new FigureType
+        {
+            Name = "Default",
+            Character = 'f'
+        };
+
+        public override string ToString()
+        {
+            return Name ?? "No name";
+        }
     }
 }

@@ -2,7 +2,7 @@
 using BrettSpielMeister.Actions;
 using BrettSpielMeister.Logic;
 using BrettSpielMeister.Model;
-using BrettSpielMeister.States;
+using BrettSpielMeister.States.Turns;
 using BurnSystems.Logging;
 using MAEDN.Rules;
 
@@ -10,7 +10,7 @@ namespace MAEDN.Behaviors
 {
     public class DefaultBehavior : PlayerBehavior
     {
-        private readonly ILogger ClassLogger = new ClassLogger(typeof(DefaultBehavior));
+        private static readonly ILogger ClassLogger = new ClassLogger(typeof(DefaultBehavior));
         private readonly MaednLogic _gameLogic;
         private readonly Player _player;
 

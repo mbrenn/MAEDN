@@ -10,6 +10,7 @@ using MAEDN.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BrettSpielMeister.States.Turns;
 
 namespace MAEDN.Rules
 {
@@ -272,7 +273,7 @@ namespace MAEDN.Rules
         /// <param name="playerSet">Playerset to be evaluated</param>
         /// <param name="field">Field to be queried</param>
         /// <returns>The given figure, if figure is on the field, otherwise null</returns>
-        public static Figure GetFigureOnField(PlayerSet playerSet, Field field)
+        public static Figure? GetFigureOnField(PlayerSet playerSet, Field field)
         {
             return playerSet.Player.Figures.FirstOrDefault(x => x.Field == field);
         }
@@ -377,7 +378,7 @@ namespace MAEDN.Rules
         /// </summary>
         /// <param name="playerSet">PlayerSet to be evaluated</param>
         /// <returns>The found field</returns>
-        public static Field GetFreeHomeField(PlayerSet playerSet)
+        public static Field? GetFreeHomeField(PlayerSet playerSet)
         {
             return playerSet.GetMaednPlayerState().HomeFields.FirstOrDefault(
                 x => playerSet.Player.Figures.All(y => y.Field != x));
@@ -396,12 +397,6 @@ namespace MAEDN.Rules
             if (position == -1)
             {
                 // Field is not a moving field
-                if (player == null)
-                {
-                    // No player, so player is on invalid field
-                    return null;
-                }
-
                 for (var n = 0; n < 4; n++)
                 {
                     var goalField = player.GetMaednPlayerState().GoalFields.ElementAt(n);
@@ -427,10 +422,6 @@ namespace MAEDN.Rules
             position = (position + 1) % movingFields.Count;
 
             var foundField = movingFields[position];
-            if (player == null)
-            {
-                return foundField;
-            }
 
             // Player would be upon starting field.
             if (foundField ==
@@ -497,7 +488,7 @@ namespace MAEDN.Rules
         public List<AllowedTurn> GetAllowedTurns()
         {
             if (Dice == null) throw new InvalidOperationException("Dice == null");
-            if (_gameState?.CurrentPlayer == null) throw new InvalidOperationException("_gameState == null");
+            if (_gameState.CurrentPlayer == null) throw new InvalidOperationException("_gameState == null");
                 
             
             var result = new List<AllowedTurn>();
@@ -508,6 +499,7 @@ namespace MAEDN.Rules
             }
 
             var playerSet = GetPlayerSet(_gameState.CurrentPlayer);
+            if (playerSet == null) return new List<AllowedTurn>();
             var playerState = (MaednPlayerState) playerSet.State;
             var hasFigureOnStartingField = HasFigureOnStartingField(playerSet);
 

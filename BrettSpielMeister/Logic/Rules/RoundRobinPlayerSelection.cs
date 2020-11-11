@@ -9,7 +9,7 @@ namespace BrettSpielMeister.Logic.Rules
 
         private readonly GameLogic _gameLogic;
 
-        private int _currentPlayer = 0;
+        private int _currentPlayer;
 
         public RoundRobinPlayerSelection(GameLogic gameLogic)
         {

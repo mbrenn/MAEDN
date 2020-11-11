@@ -37,7 +37,6 @@
         /// </summary>
         /// <param name="x">Coordinate of X</param>
         /// <param name="y">Coordinate of Y</param>
-        /// <param name="name">Name of the field</param>
         /// <param name="fieldType">Type of the field</param>
         public Field(int x, int y, FieldType fieldType)
         {

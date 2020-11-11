@@ -3,7 +3,7 @@ using BrettSpielMeister.Model;
 using BrettSpielMeister.States;
 using BurnSystems.Logging;
 
-namespace MAEDN.Rules
+namespace MAEDN.States
 {
     /// <summary>
     /// Defines the state of the player. Will be calculated each time, a player is in turn

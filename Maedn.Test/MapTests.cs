@@ -29,7 +29,7 @@ namespace Maedn.Test
             figure.Field = game.Map.MovingFields.ElementAt(10);
             var startFigure = figure.Field;
 
-            var foundField = game.GetNextFieldForPlayer(null, figure.Field, 40);
+            var foundField = game.GetNextFieldForPlayer(playerSet, figure.Field, 40);
             Assert.Equal(startFigure, foundField);
         }
 
@@ -44,10 +44,12 @@ namespace Maedn.Test
             figure.Field = game.GetNextFieldForPlayer(playerSet, figure.Field, 35);
 
             Assert.Equal(game.Map.MovingFields.ElementAt(35), figure.Field);
+            Assert.True(figure.Field != null);
 
             figure.Field = game.GetNextFieldForPlayer(playerSet, figure.Field, 4);
 
             Assert.Equal(game.Map.MovingFields.ElementAt(39), figure.Field);
+            Assert.True(figure.Field != null);
 
             var field = game.GetNextFieldForPlayer(playerSet, figure.Field, 1);
             Assert.Equal(

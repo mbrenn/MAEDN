@@ -1,5 +1,6 @@
 ﻿using BrettSpielMeister.Logic;
 using BrettSpielMeister.States;
+using MAEDN.States;
 
 namespace MAEDN.Rules
 {
@@ -16,7 +17,7 @@ namespace MAEDN.Rules
         /// <summary>
         /// Converts the player state to the converted Player state
         /// </summary>
-        /// <param name="playerState">The player state to be converted</param>
+        /// <param name="playerSet">The player state to be converted</param>
         /// <returns>The converted player state</returns>
         public static MaednPlayerState GetMaednPlayerState(this PlayerSet playerSet)
             => playerSet.State.GetMaednPlayerState();
